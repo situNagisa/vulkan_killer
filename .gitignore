@@ -1,0 +1,17 @@
+_Resharper*
+.venv
+.idea
+
+vk_video
+vulkan
+profile_output.prof
+test.h
+test_vulkan.h
+
+past/__pycache__
+past/language/__pycache__
+
+vk/__pycache__
+vk/c/__pycache__
+vk/cpp/__pycache__
+vk/lang/__pycache__
