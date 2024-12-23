@@ -27,6 +27,22 @@ def _preventing_name_collisions(spelling: str) -> str:
     return spelling
 
 
+def _is_single_bit(num: int) -> bool:
+    return num > 0 and (num & (num - 1)) == 0
+
+
+def _countr_zero(num: int) -> int:
+    return num.bit_length() - 1
+
+
+def _is_int32_max(num: int) -> bool:
+    return num == 0x7fffffff
+
+
+def _std_int32_max() -> str:
+    return '::std::numeric_limits<::std::int32_t>::max()'
+
+
 def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.symbol_table) -> cpp.name.name:
     assert mc != category_mangling.none
     namespace: list[str] = copy.deepcopy(symbol.name.namespace)
@@ -42,7 +58,10 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
         enum = None
         trait = vk.lang.name.identifier(symbol.mangling.spelling)
     
-    namespace.append(trait.api.lower())
+    if trait.api.lower() == 'vk':
+        namespace.append('vulkan')
+    else:
+        namespace.append(trait.api.lower())
     if trait.company:
         namespace.append(trait.company.lower())
     if trait.ext:
@@ -75,6 +94,7 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
                 e.value = ''
                 prev += 1
             else:
+                assert not _is_int32_max(int(e.value))
                 prev = v
     elif mc == category_mangling.enumerator:
         namespace.append(enum.name.spelling)
@@ -87,27 +107,82 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
         spelling = _to_snake(trait.id) + '_flag'
     elif mc == category_mangling.flag64:
         spelling = _to_snake(trait.id) + '_flag64'
-    elif mc == category_mangling.flag_bit:
-        namespace.append(_to_snake(trait.id) + '_bits')
+    elif mc in [category_mangling.flag_bit, category_mangling.flag64_bit]:
+        new_ns = _to_snake(trait.id)
+        if mc == category_mangling.flag64_bit:
+            new_ns += '64'
+        new_ns += '_bits'
+        namespace.append(new_ns)
         spelling = 'underlying_type'
-    elif mc == category_mangling.flag64_bit:
-        namespace.append(_to_snake(trait.id) + '64_bits')
-        spelling = 'underlying_type'
-    elif mc == category_mangling.flag_bit_v:
+    elif mc in [category_mangling.flag_bit_v, category_mangling.flag_bit_bit_v, category_mangling.flag_bit_none_v]:
         namespace.append(enum.name.namespace[-1])
-        spelling = _to_snake(trait.id) + '_'
-    elif mc == category_mangling.flag_bit_bit_v:
-        namespace.append(enum.name.namespace[-1])
-        spelling = _to_snake(trait.id)
-    elif mc == category_mangling.flag_bit_none_v:
-        namespace.append(enum.name.namespace[-1])
-        spelling = 'none'
+        match mc:
+            case category_mangling.flag_bit_v:
+                spelling = _to_snake(trait.id) + '_'
+            case category_mangling.flag_bit_bit_v:
+                spelling = _to_snake(trait.id)
+            case category_mangling.flag_bit_none_v:
+                spelling = 'none'
+        if symbol.initializer is not None:
+            static_cast = symbol.initializer.expression
+            assert isinstance(static_cast, cpp.expression.static_cast)
+            literal = static_cast.subexpression
+            assert isinstance(literal, cpp.expression.literal)
+            literal.value = literal.value.lower()
+            literal.value = literal.value.removesuffix('ull')
+            if literal.value.startswith('0x'):
+                v = int(literal.evaluate(), 16)
+            else:
+                v = int(literal.evaluate())
+            literal.value = f"1ull << {_countr_zero(v)}" if _is_single_bit(v) else hex(v).lower()
     
     elif mc == category_mangling.alias:
         spelling = _to_snake(trait.id)
+        spe = symbol.type_id.decl_specifier_seq[0]
+        if isinstance(spe, cpp.specifier.declared_type):
+            if len(spe.name.namespace) < 2 or spe.name.namespace[:2] != ['', 'std']:
+                ref_trait = vk.lang.name.identifier(spe.name.spelling)
+                if ref_trait.id == trait.id:
+                    ref_symbol = table[spe.name]
+                    ref_spe = ref_symbol.type_id.decl_specifier_seq[0]
+                    if isinstance(ref_spe, cpp.enum.enum_specifier):
+                        spelling += '_' + trait.company.lower()
     
     elif mc == category_mangling.struct:
         spelling = _to_snake(trait.id)
+        spe = symbol.type_id.decl_specifier_seq[0]
+        assert isinstance(spe, cpp.class_.class_)
+        for member in spe.members:
+            for declarator in member.member_declarator_seq:
+                if isinstance(declarator, cpp.init_declarator.init_declarator):
+                    member_spelling = declarator.declarator.introduced_name().spelling
+                    member_trait = vk.lang.name.variable(member_spelling)
+                elif isinstance(declarator, cpp.bit_field.bit_field):
+                    member_spelling = declarator.identifier
+                    member_trait = vk.lang.name.variable(member_spelling)
+                else:
+                    raise 'fuck you'
+                if member_spelling == 'sType':
+                    member_spelling = 'structure_type'
+                elif member_spelling == 'pNext':
+                    member_spelling = 'structure_next'
+                else:
+                    member_spelling = _to_snake(member_trait.id)
+                    if member_trait.prefix and member_trait.prefix != 'pfn' and member_trait.prefix[0] == 'p':
+                        member_spelling += '_ptr' * (len(member_trait.prefix) - 1)
+                    if member_spelling == spelling:
+                        member_spelling += '_'
+                    spe = member.decl_specifier_seq[0]
+                    if isinstance(spe, cpp.specifier.declared_type) and not spe.name.qualified_name.startswith('::std::'):
+                        ref_symbol = table[spe.name]
+                        if member_spelling == ref_symbol.name.spelling:
+                            member_spelling += '_'
+                if isinstance(declarator, cpp.init_declarator.init_declarator):
+                    declarator.declarator.introduced_name().spelling = member_spelling
+                elif isinstance(declarator, cpp.bit_field.bit_field):
+                    declarator.identifier = member_spelling
+                else:
+                    raise 'fuck you'
     
     elif mc == category_mangling.handle:
         namespace.append('handle')
@@ -121,12 +196,16 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
         assert isinstance(spe, cpp.specifier.declared_type)
         ref_symbol = table[spe.name]
         spelling = ref_symbol.name.spelling
+        if trait.company and isinstance(ref_symbol.type_id.decl_specifier_seq[0], cpp.enum.enum_specifier):
+            spelling += '_' + trait.company.lower()
         
         match mc:
             case category_mangling.using_flag_bit:
                 namespace.append(_to_snake(trait.id) + '_bits')
             case category_mangling.using_flag64_bit:
                 namespace.append(_to_snake(trait.id) + '64_bits')
+            case _:
+                pass
     
     spelling = _preventing_name_collisions(spelling)
     
@@ -209,89 +288,3 @@ def mangle(program: dict[cpp.name.name, vls.statement]):
         new_name = _mangle(mc, vs.symbol, symbol_table)
         vs.symbol.name.namespace = new_name.namespace
         vs.symbol.name.spelling = new_name.spelling
-
-
-def __mangle(vs: vls.statement, symbol_table: dict[cpp.name.name, cpp.symbol.symbol]):
-    category = vs.category
-    symbol = vs.symbol
-    
-    assert category != symbols.none
-    
-    if category.is_enumerator():
-        assert isinstance(symbol.initializer, cpp.initialization.copy)
-        assert isinstance(symbol.initializer.expression, cpp.expression.static_cast)
-        spe = symbol.initializer.expression.cast_to.decl_specifier_seq[0]
-        assert isinstance(spe, cpp.specifier.declared_type)
-        enum = symbol_table[spe.name]
-        enum_trait = vk.lang.name.identifier(enum.mangling.spelling)
-        trait = vk.lang.name.enumerator(enum.mangling.spelling, symbol.mangling.spelling)
-        
-        symbol.name.namespace = ['', trait.api.lower()]
-        if enum_trait.company != trait.company:
-            # assert not enum_trait.company
-            symbol.name.namespace.append(trait.company.lower())
-        if enum_trait.ext != trait.ext:
-            assert not enum_trait.ext
-            symbol.name.namespace.append('ext')
-        if category in [symbols.enumerator]:
-            symbol.name.namespace.append(enum.name.spelling)
-        else:
-            symbol.name.namespace.append(enum.name.namespace[-1])
-        
-        if trait.none:
-            if enum_trait.flag:
-                assert enum_trait.bit
-            symbol.name.spelling = 'none'
-        else:
-            symbol.name.spelling = _to_snake(trait.id)
-            if enum_trait.flag and not trait.bit:
-                symbol.name.spelling += '_'
-        
-        if symbol.name.spelling[0].isdigit():
-            symbol.name.spelling = '_' + symbol.name.spelling
-        elif is_cpp_keyword(symbol.name.spelling):
-            symbol.name.spelling = symbol.name.spelling + '_'
-    else:
-        trait = vk.lang.name.identifier(symbol.mangling.spelling)
-        symbol.name.spelling = _to_snake(trait.id)
-        symbol.name.namespace = ['', trait.api.lower()]
-        if trait.company:
-            symbol.name.namespace.append(trait.company.lower())
-        if trait.ext:
-            symbol.name.namespace.append('ext')
-        
-        if category in [symbols.function, symbols.pfn_decl]:
-            symbol.name.namespace.append('c')
-            if category == symbols.function:
-                symbol.name.spelling = symbol.mangling.spelling
-            # elif category == symbols.pfn_decl:
-            #     symbol.name.spelling += '_ptr_t'
-        elif category in [symbols.max_enum, symbols.flag_bit, symbols.flag64_bit, symbols.using]:
-            symbol.name.namespace.append(_to_snake(trait.id) + ('_64' if trait.two else '') + '_bits')
-            symbol.name.spelling = 'underlying_type'
-        elif category in [symbols.flag64]:
-            symbol.name.spelling += '_64'
-        elif category == symbols.handle:
-            symbol.name.spelling += '_handle'
-        elif category in [symbols.enum]:
-            spe = symbol.type_id.decl_specifier_seq[0]
-            assert isinstance(spe, cpp.enum.enum_specifier)
-            prev = -1
-            for e_i, e in enumerate(spe.enumerator_list):
-                e_t = vk.lang.name.enumerator(symbol.mangling.spelling, e.identifier)
-                if e_t.none:
-                    e.identifier = 'none'
-                else:
-                    e.identifier = _to_snake(e_t.id)
-                    if e.identifier and e.identifier[0].isdigit():
-                        e.identifier = '_' + e.identifier
-                    elif is_cpp_keyword(e.identifier):
-                        e.identifier = e.identifier + '_'
-                if not e.value:
-                    prev += 1
-                    continue
-                if spe.evaluate(e_i) == prev + 1:
-                    e.value = ''
-                    prev += 1
-                else:
-                    prev = spe.evaluate(e_i)

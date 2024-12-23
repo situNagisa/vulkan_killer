@@ -40,8 +40,9 @@ def main():
             '#include <cstddef>\n'
             '#include <type_traits>\n'
             '#include <concepts>\n'
+            '#include <limits>\n'
             '\n'
-            'namespace vk {\n'
+            'namespace vulkan {\n'
             '\ttemplate<::std::integral auto MaxEnum, ::std::integral auto MinEnum>\n'
             '\tstruct _calculate_enum_underlying_type\n'
             '\t{\n'
@@ -56,6 +57,7 @@ def main():
             '\ttemplate<::std::integral auto MaxEnum, ::std::integral auto MinEnum = 0u>\n'
             '\tusing _calculate_enum_underlying_type_t = typename _calculate_enum_underlying_type<MaxEnum, MinEnum>::type;\n'
             '\t\n'
+            '\tstatic_assert(sizeof(::std::uintptr_t) == sizeof(::std::uint64_t));\n'
             '}\n'
             '\n'
         )

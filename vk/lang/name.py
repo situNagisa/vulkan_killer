@@ -184,10 +184,11 @@ class enumerator:
         if len(words) >= len(enum_trait.id) and ''.join(words[:len(enum_trait.id)]).lower() == ''.join(enum_trait.id).lower():
             words = words[len(enum_trait.id):]
         
-        assert len(words)
-        if words[0] == '2':
-            self.two = True
-            words = words[1:]
+        if enum_trait.two:
+            assert len(words)
+            if words[0] == '2':
+                self.two = True
+                words = words[1:]
         
         # suffix
         self.company, self.ext = _process_suffix(words)
@@ -217,7 +218,20 @@ class enumerator:
             if not self.company:
                 self.company = enum_trait.company
                 
+
+@dataclasses.dataclass(init=False)
+class variable:
+    prefix: str = ''
+    id: list[str] = None
+    
+    def __init__(self, sb_name: str):
+        words = split_identifier(sb_name)
         
+        if words[0] == 's' or words[0].count('p') == len(words[0]) or words[0] == 'pfn':
+            self.prefix = words[0]
+            words = words[1:]
+        
+        self.id = words
         
         
         

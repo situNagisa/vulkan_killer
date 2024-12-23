@@ -261,7 +261,7 @@ def _create_specifier(cursor: cci.Cursor) -> list[cpp.specifier.specifier]:
                 assert child.kind
                 e.enumerator_list.append(cpp.enum.enumerator(
                     identifier=child.spelling,
-                    value=child.enum_value,
+                    value=str(child.enum_value),
                 ))
 
         return [e]

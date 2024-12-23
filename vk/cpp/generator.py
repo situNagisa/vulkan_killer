@@ -13,7 +13,7 @@ import vk.lang.statement as vls
 import vk.lang.category as vlc
 
 
-def _create_statement_from_vs(vs: vls.statement) -> cpp.declaration.declaration:
+def _create_statement_from_vs(vs: vls.statement, table: cpp.symbol.symbol_table) -> cpp.declaration.declaration:
     category = vs.category
     symbol = vs.symbol
     symbols = vlc.cpp_symbol
@@ -45,11 +45,15 @@ def _create_statement_from_vs(vs: vls.statement) -> cpp.declaration.declaration:
                 decl_specifier_seq=symbol.type_id.decl_specifier_seq,
                 init_declarator_seq=[]
             )
-        if category in [symbols.using]:
-            return cpp.using_declaration.using(
-                namespace=symbol.name.namespace,
-                identifier=symbol.type_id.decl_specifier_seq[0].name
-            )
+        if category in [symbols.flag, symbols.flag64, symbols.flag_bit, symbols.flag64_bit, symbols.alias]:
+            spe = symbol.type_id.decl_specifier_seq[0]
+            if isinstance(spe, cpp.specifier.declared_type) and not spe.name.qualified_name.startswith('::std::'):
+                ref_symbol = table[spe.name]
+                if ref_symbol.name.spelling == symbol.name.spelling:
+                    return cpp.using_declaration.using(
+                        namespace=symbol.name.namespace,
+                        identifier=spe.name
+                    )
         result = cpp.type_alias.alias(
                                             identifier=symbol.name,
                                             attribute=[],
@@ -83,7 +87,7 @@ def generate(program: dict[cpp.name.name, vls.statement]):
         assert rn[-1] == name.spelling
         return cpp.name.qualified_name(name.spelling, rn[:-1])
     
-    symbol_table: dict[cpp.name.name, cpp.symbol.symbol] = {}
+    symbol_table: cpp.symbol.symbol_table = {}
     for mangling, vs in program.items():
         symbol_table[mangling] = vs.symbol
     
@@ -102,10 +106,13 @@ def generate(program: dict[cpp.name.name, vls.statement]):
         
         if category == vlc.cpp_symbol.max_enum:
             assert isinstance(symbol.initializer, cpp.initialization.copy)
-            coder.write_line(f"using underlying_type = _calculate_enum_underlying_type_t<{symbol.initializer.expression.evaluate()}>;")
+            v = int(symbol.initializer.expression.evaluate())
+            from .mangle import _is_int32_max, _std_int32_max
+            
+            coder.write_line(f"using underlying_type = _calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
             continue
         
-        coder.write_line(_generate_statement(_create_statement_from_vs(vs), relative_name, symbol_table))
+        coder.write_line(_generate_statement(_create_statement_from_vs(vs, symbol_table), relative_name, symbol_table))
 
     coder.change_namespace([''])
     return coder.data
@@ -212,7 +219,9 @@ def _generate_specifier(s: cpp.specifier.specifier, relative_name: relative_name
             result = _cat_str(s.key.name, s.head_name.spelling)
             if s.base is not None:
                 assert isinstance(s.base, tuple)
-                result = _cat_str(result, ':', f"_calculate_enum_underlying_type_t<{s.base[0]}, {s.base[1]}>")
+                from .mangle import _is_int32_max, _std_int32_max
+                max, min = int(s.base[0]), int(s.base[1])
+                result = _cat_str(result, ':', f"_calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(max) else hex(max).lower()}, {_std_int32_max() if _is_int32_max(min) else hex(min).lower()}>")
             if s.enumerator_list is not None:
                 result += '\n{\n' if len(s.enumerator_list) else '{'
                 for enumerator in s.enumerator_list:
@@ -283,7 +292,7 @@ def _generate_declarator(d: cpp.declarator.declarator, relative_name: relative_n
             result = f"({result})"
         return f"{result}[{d.count}]"
     if isinstance(d, cpp.function.function):
-        result = f"{_generate_declarator(d.get_sub_declarator(), relative_name, table)}"
+        result = f"VKAPI_CALL {_generate_declarator(d.get_sub_declarator(), relative_name, table)}"
         if isinstance(d.get_sub_declarator(), cpp.declarator.pointer):
             result = f"({result})"
         

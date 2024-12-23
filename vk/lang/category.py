@@ -188,11 +188,14 @@ class c_symbol(enum.Enum):
                             return c_symbol.flag64_bit if trait.bit else c_symbol.flag64
                         # assert trait.bit
                         return c_symbol.flag_bit
-                    
-                    spe_trait = identifier(spe.name.spelling)
-                    if spe_trait.id == trait.id:
-                        assert spe_trait.company != trait.company or spe_trait.ext != trait.ext
-                        return c_symbol.using
+                    if trait.flag:
+                        if trait.bit:
+                            return c_symbol.flag64_bit if trait.two else c_symbol.flag_bit
+                        return c_symbol.flag64 if trait.two else c_symbol.flag
+                    # spe_trait = identifier(spe.name.spelling)
+                    # if spe_trait.id == trait.id:
+                    #     assert spe_trait.company != trait.company or spe_trait.ext != trait.ext
+                    #     return c_symbol.using
                 elif isinstance(spe, cpp.specifier.elaborated_type):
                     spe_trait = identifier(spe.identifier.name.spelling)
                     assert isinstance(s.type_id.declarator, cpp.declarator.pointer)
@@ -256,19 +259,24 @@ class cpp_symbol(enum.Enum):
     """
     <id>_handle
     """
-    alias = 202
+    alias = 210
     """
     
     """
-    struct = 203
-    enum = 204
-    using = 205
-    flag = 206
-    flag_bit = 207
-    flag64 = 208
-    flag64_bit = 209
-    pfn = 210
-    pfn_decl = 211
+    
+    struct = 220
+    
+    enum = 230
+    
+    using = 240
+    
+    flag = 241
+    flag_bit = 242
+    flag64 = 243
+    flag64_bit = 244
+    
+    pfn = 250
+    pfn_decl = 251
     
 
     def is_type(self) -> bool:

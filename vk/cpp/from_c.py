@@ -101,6 +101,7 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
             assert isinstance(spe, cpp.enum.enum_specifier)
             spe.key = cpp.keyword.enum.enum_class
             i = 0
+            enumerators = []
             while i < len(spe.enumerator_list):
                 e = spe.enumerator_list[i]
                 from ..lang.name import enumerator
@@ -108,11 +109,16 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
                 if trait.company == e_t.company and trait.ext == e_t.ext:
                     i += 1
                     continue
-                stmt_list.append(vls.statement(
+                enumerators.append(vls.statement(
                     category=vlc.cpp_symbol.enumerator,
                     symbol=_create_constant(symbol.mangling, e.identifier, str(spe.evaluate(i)))
                 ))
                 del spe.enumerator_list[i]
+            def sort_callback(s: vls.statement):
+                trait = vln.identifier(s.symbol.mangling.spelling)
+                return trait.company
+            
+            stmt_list += list(sorted(enumerators, key=sort_callback))
             e = spe.enumerator_list[-1]
             from ..lang.name import enumerator
             e_t = enumerator(symbol.mangling.spelling, e.identifier)
@@ -132,11 +138,17 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
                 category=vlc.cpp_symbol.max_enum,
                 symbol=max_enum,
             ))
+            
+            enumerators = []
             for i, e in enumerate(spe.enumerator_list[:-1]):
-                stmt_list.append(vls.statement(
+                enumerators.append(vls.statement(
                     category=vlc.cpp_symbol.flag_bit_v,
                     symbol=_create_constant(mangling, e.identifier, str(spe.evaluate(i)))
                 ))
+            def sort_callback(s: vls.statement):
+                trait = vln.enumerator(mangling.spelling, s.symbol.mangling.spelling)
+                return trait.company
+            stmt_list += list(sorted(enumerators, key=sort_callback))
         
         if c_c == vlc.c_symbol.pfn:
             pfns.append(len(stmt_list))
