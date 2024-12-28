@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
 from .declaration import block
-from .name import name_introducer
+from .name import name_introducer, depender, name
 from .symbol import symbol_sequence
 
 
 @dataclass
-class alias(block, name_introducer):
+class alias(block, name_introducer, depender):
 	from .name import name as _name
 	from .type import type_id as _type_id
 	
@@ -16,6 +16,9 @@ class alias(block, name_introducer):
 	
 	def introduced_name(self) -> _name:
 		return self.identifier
+	
+	def get_depend_names(self) -> set[name]:
+		return self.type_id.get_depend_names()
 	
 	def export_symbol_seq(self, table) -> symbol_sequence:
 		from .symbol import symbol, category

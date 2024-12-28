@@ -3,7 +3,7 @@ import typing
 from dataclasses import dataclass
 from abc import ABC
 
-from .name import name_introducer
+from .name import name_introducer, name, depender, collect_depend_name_from_iterable
 
 '''
 declarator:
@@ -19,8 +19,13 @@ class declarator(ABC, name_introducer):
     pass
 
 
-class compound:
+class compound(depender):
     from abc import abstractmethod as _abstractmethod
+    
+
+    def get_depend_names(self) -> set[name]:
+        d = self.get_sub_declarator()
+        return d.get_depend_names() if isinstance(d, depender) else set[name]()
     
     @_abstractmethod
     def get_sub_declarator(self) -> declarator:

@@ -4,16 +4,22 @@ import sys
 import typing
 from dataclasses import dataclass
 
-from past.language.name import name as _name
-
+from .name import name as _name
+from .name import depender, collect_depend_name_from_iterable
 
 class category(enum.Enum):
     type = 0
     value = 1
+    
+    def is_value(self) -> bool:
+        return self == category.value
+    
+    def is_type(self) -> bool:
+        return self == category.type
 
 
 @dataclass
-class symbol:
+class symbol(depender):
     from .type import type_id as _type_id
     from .initialization import initializer as _initializer
     
@@ -35,7 +41,12 @@ class symbol:
         self.type_id = type_id
         self.name = name if name is not None else mangling
         self.initializer = initializer
-
+        
+    def get_depend_names(self) -> set[_name]:
+        result = self.type_id.get_depend_names()
+        if self.initializer is not None and isinstance(self.initializer, depender):
+            result = result | self.initializer.get_depend_names()
+        return result
 
 class symbol_sequence(list[symbol]):
     
@@ -79,7 +90,7 @@ class symbol_sequence(list[symbol]):
         raise 'fuck you'
 
 
-symbol_table = dict[_name, symbol]
+symbol_table = typing.Callable[[_name], typing.Optional[symbol]]
 
 class symbol_exporter:
     from abc import abstractmethod as _abstractmethod

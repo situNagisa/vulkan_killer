@@ -1,46 +1,35 @@
 import copy
 
-import past.language.symbol
 from past import language as cpp
+import past.language.symbol
 import past.language.statement
 import past.language.name
 
-class program:
-    statements: list[cpp.statement.statement]
-    symbol_table: past.language.symbol.symbol_table
-    
-    def __init__(self, statements: list[cpp.statement.statement]):
-        self.statements = statements
-        self.symbol_table = _create_symbol_table(self.statements)
-    
-    def modify_symbol_table(self, new_symbols: past.language.symbol.symbol_sequence):
-        _modify_symbol_table(self.symbol_table, new_symbols)
-    
-    def append_symbol(self, new_symbol: cpp.name.name_introducer):
-        assert new_symbol.introduced_name() not in self.symbol_table.keys()
-        self.symbol_table[copy.deepcopy(new_symbol.introduced_name())] = new_symbol
-    
-    def append_symbol_seq(self, new_symbols: past.language.symbol.symbol_sequence):
-        for symbol in new_symbols:
-            self.append_symbol(symbol)
-    
-def _modify_symbol_table(symbol_table: past.language.symbol.symbol_table, new_symbols: past.language.symbol.symbol_sequence):
-    for new_symbol in new_symbols:
-        assert new_symbol.introduced_name() in symbol_table.keys()
-        symbol_table[new_symbol.introduced_name()] = new_symbol
-        
+from ..lang.statement import vk as vk_stmt
 
-def _create_symbol_table(statements: list[cpp.statement.statement]) -> past.language.symbol.symbol_table:
-    result: past.language.symbol.symbol_table = past.language.symbol.symbol_table()
-    for statement in statements:
+def collect_symbol_table(statements: list[cpp.statement.location_statement]) -> dict[cpp.name.name, vk_stmt]:
+    result: dict[cpp.name.name, vk_stmt] = dict[cpp.name.name, vk_stmt]()
+    
+    def get_symbol_by_mangling(mangling: cpp.name.name) -> cpp.symbol.symbol:
+        return result[mangling].symbol
+    
+    for location_statement in statements:
+        extent = location_statement.extent
+        statement = location_statement.stmt
         if not isinstance(statement, past.language.symbol.symbol_exporter):
             continue
-        symbol_seq: past.language.symbol.symbol_sequence = statement.export_symbol_seq(result)
+        symbol_seq: past.language.symbol.symbol_sequence = statement.export_symbol_seq(get_symbol_by_mangling)
         for symbol in symbol_seq:
-            if symbol.name not in result.keys():
-                result[copy.deepcopy(symbol.name)] = symbol
+            if symbol.mangling not in result.keys():
+                result[copy.deepcopy(symbol.mangling)] = vk_stmt(
+                    location=cpp.location.source_location(
+                        file=extent.file,
+                        position=extent.start,
+                    ),
+                    symbol=symbol,
+                )
                 continue
-            curr = result[symbol.name]
+            curr = result[symbol.mangling].symbol
             assert curr.category == cpp.symbol.category.type
             assert curr.category == symbol.category
             if isinstance(curr.type_id.decl_specifier_seq[0], cpp.class_.class_):
@@ -56,6 +45,12 @@ def _create_symbol_table(statements: list[cpp.statement.statement]) -> past.lang
                 assert isinstance(symbol.type_id.decl_specifier_seq[0], cpp.class_.class_)
             elif isinstance(curr.type_id.decl_specifier_seq[0], cpp.enum.enum_specifier):
                 assert isinstance(symbol.type_id.decl_specifier_seq[0], cpp.enum.enum_specifier)
-            result[symbol.name] = symbol
+            result[symbol.mangling] = vk_stmt(
+                    location=cpp.location.source_location(
+                        file=extent.file,
+                        position=extent.start,
+                    ),
+                    symbol=symbol,
+                )
     
     return result

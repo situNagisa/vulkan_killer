@@ -3,7 +3,7 @@ import typing
 from dataclasses import dataclass
 
 from .specifier import typed, declared_type
-from .name import name_introducer
+from .name import name_introducer, name, depender, collect_depend_name_from_iterable
 
 
 @dataclass
@@ -13,7 +13,7 @@ class enumerator:
 
 
 @dataclass
-class enum_specifier(typed, name_introducer):
+class enum_specifier(typed, name_introducer, depender):
     from .keyword import enum as _enum
     from .name import name as _name
     
@@ -25,6 +25,14 @@ class enum_specifier(typed, name_introducer):
     
     def introduced_name(self) -> _name:
         return self.head_name
+    
+    def get_depend_names(self) -> set[name]:
+        result = set[name]()
+        if self.base is not None and isinstance(self.base, declared_type):
+            result = self.base.get_depend_names()
+        if self.enumerator_list is not None:
+            result = result | collect_depend_name_from_iterable(self.enumerator_list)
+        return result
     
     def evaluate(self, index: int) -> int:
         e = self.enumerator_list[index]

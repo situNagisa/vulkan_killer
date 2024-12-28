@@ -3,10 +3,13 @@ from dataclasses import dataclass
 
 from .statement import statement
 from .symbol import symbol_sequence, symbol_exporter
+from .name import name, depender, collect_depend_name_from_iterable
 
 
-class declaration(statement, symbol_exporter, ABC):
-    pass
+class declaration(statement, symbol_exporter, depender, ABC):
+    
+    def get_depend_names(self) -> set[name]:
+        return set[name]()
 
 
 class block(declaration, ABC):
@@ -35,14 +38,18 @@ class simple(block):
                 return False
         return contains_typedef
     
+    def get_depend_names(self) -> set[name]:
+        return collect_depend_name_from_iterable(self.decl_specifier_seq) | collect_depend_name_from_iterable(self.init_declarator_seq)
+    
     def export_symbol_seq(self, table) -> symbol_sequence:
-        from .type import type_id, as_typed_specifier_seq
+        from .type import type_id
+        from .specifier_seq import cv_typed_only
         from .symbol import symbol, category
         from .declarator import copy_as_abstract_declarator
         from .name import name_introducer
 
         result: symbol_sequence = symbol_sequence()
-        specifier_seq = as_typed_specifier_seq(self.decl_specifier_seq)
+        specifier_seq = cv_typed_only(self.decl_specifier_seq)
         symbol_category = category.type if self.is_typedef_decl() else category.value
         
         for specifier in specifier_seq:

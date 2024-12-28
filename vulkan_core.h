@@ -477,9 +477,6 @@ typedef enum VkSubmitFlagBits {
 typedef VkFlags VkSubmitFlags;
 typedef VkSubmitFlagBits VkSubmitFlagBitsKHR;
 
-typedef VkFlags64 VkPhysicalDeviceSchedulingControlsFlagBitsARM;
-static const VkPhysicalDeviceSchedulingControlsFlagBitsARM VK_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_SHADER_CORE_COUNT_ARM = 0x00000001ULL;
-
 typedef enum VkPipelineCreateFlagBits {
     VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT = 0x00000001,
     VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT = 0x00000002,
@@ -676,6 +673,19 @@ static const VkPipelineStageFlagBits2 VK_PIPELINE_STAGE_2_MICROMAP_BUILD_BIT_EXT
 static const VkPipelineStageFlagBits2 VK_PIPELINE_STAGE_2_CLUSTER_CULLING_SHADER_BIT_HUAWEI = 0x20000000000ULL;
 static const VkPipelineStageFlagBits2 VK_PIPELINE_STAGE_2_OPTICAL_FLOW_BIT_NV = 0x20000000ULL;
 
+#define VK_ARM_scheduling_controls 1
+#define VK_ARM_SCHEDULING_CONTROLS_SPEC_VERSION 1
+#define VK_ARM_SCHEDULING_CONTROLS_EXTENSION_NAME "VK_ARM_scheduling_controls"
+typedef VkFlags64 VkPhysicalDeviceSchedulingControlsFlagsARM;
+
+typedef VkFlags64 VkPhysicalDeviceSchedulingControlsFlagBitsARM;
+static const VkPhysicalDeviceSchedulingControlsFlagBitsARM VK_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_SHADER_CORE_COUNT_ARM = 0x00000001ULL;
+
+// VK_KHR_acceleration_structure is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_acceleration_structure 1
+#define VK_KHR_ACCELERATION_STRUCTURE_SPEC_VERSION 13
+#define VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME "VK_KHR_acceleration_structure"
+
 typedef enum VkAccelerationStructureTypeKHR {
     VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR = 0,
     VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR = 1,
@@ -685,6 +695,14 @@ typedef enum VkAccelerationStructureTypeKHR {
     VK_ACCELERATION_STRUCTURE_TYPE_MAX_ENUM_KHR = 0x7FFFFFFF
 } VkAccelerationStructureTypeKHR;
 typedef VkAccelerationStructureTypeKHR VkAccelerationStructureTypeNV;
+
+// VK_NV_ray_tracing is a preprocessor guard. Do not pass it to API calls.
+#define VK_NV_ray_tracing 1
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkAccelerationStructureNV)
+#define VK_NV_RAY_TRACING_SPEC_VERSION    3
+#define VK_NV_RAY_TRACING_EXTENSION_NAME  "VK_NV_ray_tracing"
+#define VK_SHADER_UNUSED_KHR              (~0U)
+#define VK_SHADER_UNUSED_NV               VK_SHADER_UNUSED_KHR
 
 typedef enum VkBuildAccelerationStructureFlagBitsKHR {
     VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR = 0x00000001,
@@ -720,6 +738,11 @@ typedef struct VkAccelerationStructureInfoNV {
     const VkGeometryNV*                    pGeometries;
 } VkAccelerationStructureInfoNV;
 
+// VK_KHR_performance_query is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_performance_query 1
+#define VK_KHR_PERFORMANCE_QUERY_SPEC_VERSION 1
+#define VK_KHR_PERFORMANCE_QUERY_EXTENSION_NAME "VK_KHR_performance_query"
+
 typedef enum VkPerformanceCounterScopeKHR {
     VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_BUFFER_KHR = 0,
     VK_PERFORMANCE_COUNTER_SCOPE_RENDER_PASS_KHR = 1,
@@ -729,6 +752,33 @@ typedef enum VkPerformanceCounterScopeKHR {
     VK_QUERY_SCOPE_COMMAND_KHR = VK_PERFORMANCE_COUNTER_SCOPE_COMMAND_KHR,
     VK_PERFORMANCE_COUNTER_SCOPE_MAX_ENUM_KHR = 0x7FFFFFFF
 } VkPerformanceCounterScopeKHR;
+
+// VK_VERSION_1_1 is a preprocessor guard. Do not pass it to API calls.
+#define VK_VERSION_1_1 1
+// Vulkan 1.1 version number
+#define VK_API_VERSION_1_1 VK_MAKE_API_VERSION(0, 1, 1, 0)// Patch version should always be set to 0
+
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkSamplerYcbcrConversion)
+VK_DEFINE_NON_DISPATCHABLE_HANDLE(VkDescriptorUpdateTemplate)
+#define VK_MAX_DEVICE_GROUP_SIZE          32U
+#define VK_LUID_SIZE                      8U
+#define VK_QUEUE_FAMILY_EXTERNAL          (~1U)
+
+typedef struct VkPhysicalDevice16BitStorageFeatures {
+    VkStructureType    sType;
+    void*              pNext;
+    VkBool32           storageBuffer16BitAccess;
+    VkBool32           uniformAndStorageBuffer16BitAccess;
+    VkBool32           storagePushConstant16;
+    VkBool32           storageInputOutput16;
+} VkPhysicalDevice16BitStorageFeatures;
+
+// VK_KHR_16bit_storage is a preprocessor guard. Do not pass it to API calls.
+#define VK_KHR_16bit_storage 1
+#define VK_KHR_16BIT_STORAGE_SPEC_VERSION 1
+#define VK_KHR_16BIT_STORAGE_EXTENSION_NAME "VK_KHR_16bit_storage"
+typedef VkPhysicalDevice16BitStorageFeatures VkPhysicalDevice16BitStorageFeaturesKHR;
+
 
 #ifdef __cplusplus
 }

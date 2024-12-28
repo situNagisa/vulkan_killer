@@ -1,3 +1,5 @@
+import os.path
+
 import clang.cindex as CX
 import cProfile
 
@@ -7,6 +9,8 @@ from vk.c import program as vkp
 from vk.cpp.from_c import parse_c_program
 import vk.cpp.generator
 import vk.cpp.mangle
+import vk.cpp.module
+import vk.c.module
 
 import logging
 
@@ -23,48 +27,33 @@ def main():
                      args=['-DVKAPI_PTR=__stdcall'])  # options=CX.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
     logging.info(f"parse file {file} successfully!")
     
-    program = vkp.program(parse(file, tu.cursor))
+    stmts = parse(file, tu.cursor)
+    
+    vk_c_symbol_table = vkp.collect_symbol_table(stmts)
     logging.info(f"cast vulkan to c program successfully")
     
-    result = parse_c_program(program)
+    table, infos = vk.c.module.module_struct(file)
+    module_keys = vk.cpp.module.classify_module(infos, vk_c_symbol_table)
+    
+    vkpp_symbol_table = parse_c_program(module_keys, vk_c_symbol_table)
     logging.info(f"cast c program to cpp symbols successfully")
     
-    vk.cpp.mangle.mangle(result)
+    api = 'vulkan_killer'
+    
+    vk.cpp.mangle.mangle(api, vkpp_symbol_table)
     logging.info(f"mangle cpp symbols successfully")
     
-    output_file = "test_vulkan.h"
-    code = vk.cpp.generator.generate(result)
-    with open(output_file, 'w') as f:
-        f.write(
-            '#include <cstdint>\n'
-            '#include <cstddef>\n'
-            '#include <type_traits>\n'
-            '#include <concepts>\n'
-            '#include <limits>\n'
-            '\n'
-            'namespace vulkan {\n'
-            '\ttemplate<::std::integral auto MaxEnum, ::std::integral auto MinEnum>\n'
-            '\tstruct _calculate_enum_underlying_type\n'
-            '\t{\n'
-            '\t\tenum\n'
-            '\t\t{\n'
-            '\t\t\tmin_enum = MinEnum,\n'
-            '\t\t\tmax_enum = MaxEnum,\n'
-            '\t\t};\n'
-            '\t\tusing type = ::std::underlying_type_t<decltype(max_enum)>;\n'
-            '\t};\n'
-            '\t\n'
-            '\ttemplate<::std::integral auto MaxEnum, ::std::integral auto MinEnum = 0u>\n'
-            '\tusing _calculate_enum_underlying_type_t = typename _calculate_enum_underlying_type<MaxEnum, MinEnum>::type;\n'
-            '\t\n'
-            '\tstatic_assert(sizeof(::std::uintptr_t) == sizeof(::std::uint64_t));\n'
-            '}\n'
-            '\n'
-        )
-        f.write(code)
-        f.write('\n')
+    vk.cpp.module.make_module_table(table, vkpp_symbol_table)
     
-    logging.info(f"write result to {output_file}")
+    generates = vk.cpp.generator.generate(api, [info[1].key for info in infos], table, vkpp_symbol_table)
+    for g in generates:
+        os.makedirs(os.path.dirname(g.file), exist_ok=True)
+        with open(g.file, 'w') as f:
+            f.write(g.code)
+            f.write('\n')
+        logging.info(f"write result to {g.file}")
+    
+    
 
 if __name__ == '__main__':
     profiler = cProfile.Profile()

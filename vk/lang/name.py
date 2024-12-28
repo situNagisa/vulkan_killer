@@ -44,13 +44,15 @@ filed =
 可以看到, 无意义的前缀后缀一大堆, tmd去死吧
 '''
 import dataclasses
+import enum
 import logging
+import typing
 
 from vk.spliter import split_identifier
 
 companies = [
-    'ext', 'khr', 'huawei', 'nv', 'arm', 'qcom', 'amd', 'valve', 'nvx', 'android', 'fuchsia', 'qnx',
-    'fuchsia', 'intel', 'lunarg', 'msft'
+    'ext', 'khr', 'huawei', 'nv', 'nvx', 'arm', 'qcom', 'amd', 'amdx', 'valve', 'android', 'fuchsia', 'qnx',
+    'fuchsia', 'intel', 'lunarg', 'msft', 'img'
 ]
 
 
@@ -116,7 +118,7 @@ class identifier:
         if len(words) < 2:
             raise 'fuck you'
         if words[0].lower() != 'vk':
-            logging.warning(f"不是哥们??, {words[0]}")
+            logging.warning(f"identifier 不是哥们??, {words[0]}")
         self.api = words[0]
         words = words[1:]
         
@@ -177,7 +179,7 @@ class enumerator:
         # api
         assert len(words) > 1
         if words[0] != 'VK':
-            logging.warning(f"不是哥们??, {words[0]}")
+            logging.warning(f"enumerator 不是哥们??, {words[0]}")
         self.api = words[0].lower()
         words = words[1:]
         
@@ -234,4 +236,96 @@ class variable:
         self.id = words
         
         
+@dataclasses.dataclass
+class core_module:
+    major: int
+    minor: int
+    
+class extension_category(enum.Enum):
+    guard = 0
+    spec_version = 1
+    extension_name = 2
+    
+@dataclasses.dataclass
+class extension_module:
+    company: str
+    name: list[str]
+    category: extension_category
+    
+@dataclasses.dataclass
+class module:
+    api: str
+    info: typing.Optional[core_module | extension_module]
+    
+    def __init__(self, sb_name: str):
+        self.api = ''
+        self.info = None
         
+        if sb_name.startswith('_'):
+            return
+        
+        words = sb_name.split('_')
+        
+        # api
+        assert len(words)
+        if words[0] != 'VK':
+            return
+            logging.warning(f"module 不是哥们??, {words[0]}")
+        self.api = words[0]
+        words = words[1:]
+        
+        if not len(words):
+            return
+        selector = words[0]
+        words = words[1:]
+        
+        if selector == 'VERSION':
+            if len(words) != 2:
+                return
+            if not words[0].isdigit() or not words[1].isdigit():
+                return
+            major, minor = int(words[0]), int(words[1])
+            self.info = core_module(
+                major=major,
+                minor=minor,
+            )
+        elif is_company(selector) or selector == 'EXT':
+            assert len(words)
+            if all([word.islower() or word.isdigit() for word in words]):
+                assert words[-1] != 'VERSION'
+                assert words[-1] != 'NAME'
+                category = extension_category.guard
+                name = words
+            elif words[-1] == 'VERSION':
+                assert len(words) > 2
+                assert words[-2] == 'SPEC'
+                category = extension_category.spec_version
+                name = words[:-2]
+            elif words[-1] == 'NAME':
+                assert len(words) > 2
+                assert words[-2] == 'EXTENSION'
+                category = extension_category.extension_name
+                name = words[:-2]
+            else:
+                raise 'fuck you'
+            self.info = extension_module(
+                category=category,
+                company=selector,
+                name=name,
+            )
+        else:
+            return
+        
+def generate_module_key(m: module):
+    from .module import key
+    if isinstance(m.info, core_module):
+        return key(
+            module='core',
+            component=f"{m.info.major}_{m.info.minor}"
+        )
+    if isinstance(m.info, extension_module):
+        return key(
+            module=m.info.company.lower(),
+            component='_'.join([word.lower() for word in m.info.name])
+        )
+    return None

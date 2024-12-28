@@ -81,7 +81,7 @@ class literal(primary):
     
 
 @dataclass
-class identifier(expression):
+class identifier(primary):
     from .name import name as _name
     from .type import type_id as _type_id
     

@@ -60,7 +60,7 @@ class stmt(enum.Enum):
                 return stmt.none
             return stmt.typedef
         if s.category == cpp.symbol.category.value:
-            if isinstance(s.type_id.declarator, cpp.function.function):
+            if isinstance(s.type_id.declarator, cpp.function.declarator):
                 return stmt.function
             if isinstance(s.type_id.declarator, cpp.declarator.abstract):
                 return stmt.variable

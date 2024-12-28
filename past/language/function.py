@@ -4,10 +4,11 @@ from dataclasses import dataclass
 
 from .declarator import declarator as _declarator, copy_as_abstract_declarator
 from .declarator import compound as _compound
+from .name import name, depender, collect_depend_name_from_iterable
 
 
 @dataclass
-class parameter:
+class parameter(depender):
     from .specifier import specifier as _specifier
     from .initialization import copy as _copy
     from .type import type_id as _type_id
@@ -20,15 +21,24 @@ class parameter:
     
     @property
     def type_id(self) -> _type_id:
-        from .type import type_id as _type_id, as_typed_specifier_seq
+        from .type import type_id as _type_id
+        from .specifier_seq import cv_typed_only
         
         return _type_id(
-            decl_specifier_seq=as_typed_specifier_seq(self.decl_specifier_seq),
+            decl_specifier_seq=cv_typed_only(self.decl_specifier_seq),
             declarator=copy_as_abstract_declarator(copy.copy(self.declarator))
         )
+    
+    def get_depend_names(self) -> set[name]:
+        result = collect_depend_name_from_iterable(self.decl_specifier_seq)
+        if isinstance(self.declarator, depender):
+            result = result | self.declarator.get_depend_names()
+        if self.initializer is not None and isinstance(self.initializer, depender):
+            result = result | self.initializer.get_depend_names()
+        return result
 
 @dataclass
-class function(_declarator, _compound):
+class declarator(_declarator, _compound):
     from .cv import const as _const
     from .cv import volatile as _volatile
     from .name import name as _name
@@ -44,6 +54,9 @@ class function(_declarator, _compound):
     def introduced_name(self) -> _name:
         return self.declarator.introduced_name()
     
+    def get_depend_names(self) -> set[name]:
+        return super().get_depend_names() | collect_depend_name_from_iterable(self.parameter_list)
+    
     def get_sub_declarator(self) -> _declarator:
         return self.declarator
     
@@ -51,7 +64,7 @@ class function(_declarator, _compound):
         self.declarator = new
     
     def __copy__(self):
-        return function(
+        return declarator(
             declarator=copy.copy(self.declarator),
             parameter_list=self.parameter_list,
             const=self.const,
@@ -59,3 +72,31 @@ class function(_declarator, _compound):
             noexcept=self.noexcept,
             attribute=[],
         )
+
+
+class body:
+    pass
+
+class default(body):
+    pass
+
+@dataclass
+class delete(body):
+    why: str = ''
+    
+@dataclass
+class normal_body(body):
+    from .statement import compound as _compound
+    # constructor initializer
+    compound_statement: _compound
+
+from .declaration import declaration as _declaration
+
+@dataclass
+class definition(_declaration):
+    from .specifier import specifier as _specifier
+    
+    attribute: list[str]
+    decl_specifier_seq: list[_specifier]
+    declarator: declarator
+    function_body: body

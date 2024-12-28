@@ -36,6 +36,20 @@ class name_introducer:
     def introduced_name(self) -> name:
         pass
 
+class depender:
+    from abc import abstractmethod as _abstractmethod
+    
+    @_abstractmethod
+    def get_depend_names(self) -> set[name]:
+        pass
+
+
+def collect_depend_name_from_iterable(it: typing.Iterable) -> set[name]:
+    result = set[name]()
+    for i in it:
+        if isinstance(i, depender):
+            result = result | i.get_depend_names()
+    return result
 
 def filter_introducer(range: typing.Iterable) -> list[name_introducer]:
     return list(filter(lambda item: isinstance(item, name_introducer), range))

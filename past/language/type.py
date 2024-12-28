@@ -1,9 +1,9 @@
 import typing
 
-from .specifier import specifier, typed
+from .specifier import typed
+from .name import name, depender, collect_depend_name_from_iterable
 
-
-class type_id:
+class type_id(depender):
 	from .declarator import declarator as _declarator
 	
 	decl_specifier_seq: list[typed]
@@ -16,7 +16,9 @@ class type_id:
 		assert isinstance(get_identifier_declarator(declarator), abstract)
 		self.decl_specifier_seq = decl_specifier_seq
 		self.declarator = declarator
-
-
-def as_typed_specifier_seq(seq: list[specifier]) -> list[typed]:
-	return list(filter(lambda x: isinstance(x, typed), seq))
+	
+	def get_depend_names(self) -> set[name]:
+		result = collect_depend_name_from_iterable(self.decl_specifier_seq)
+		if isinstance(self.declarator, depender):
+			result = result | self.declarator.get_depend_names()
+		return result

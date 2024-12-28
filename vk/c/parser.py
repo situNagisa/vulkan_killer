@@ -6,25 +6,12 @@ import past.language.class_
 import past.language.function
 import past.language.enum
 import past.language.statement
+import past.language.location
 import clang.cindex as cci
 import os
 
 def _get_location(file: str) -> str:
     return os.path.normpath(os.path.abspath(file))
-
-
-def _using_enum_or_class_filter(children: list[cci.Cursor], index: int) -> bool:
-    if index == 0:
-        return True
-    prev, curr = children[index - 1], children[index]
-    if curr.kind != cci.CursorKind.TYPEDEF_DECL:
-        return True
-    if prev.kind not in [cci.CursorKind.STRUCT_DECL, cci.CursorKind.UNION_DECL,
-                         cci.CursorKind.ENUM_DECL]:
-        return True
-    if prev.spelling.split(' ')[-1] != curr.spelling:
-        return True
-    return False
 
 
 def _is_expression_cursor(kind: cci.CursorKind) -> bool:
@@ -39,7 +26,7 @@ def _create_declarator_list(declarator: cpp.declarator.declarator) -> list[cpp.d
     if isinstance(declarator, cpp.declarator.name) or isinstance(declarator, cpp.declarator.abstract):
         return [declarator]
     if isinstance(declarator, cpp.declarator.pointer) or isinstance(declarator, cpp.declarator.array) or isinstance(
-            declarator, cpp.function.function):
+            declarator, cpp.function.declarator):
         return [declarator] + _create_declarator_list(declarator.declarator)
     raise 'fuck you'
 
@@ -50,7 +37,7 @@ def _reverse_declarator(declarator: cpp.declarator.declarator) -> cpp.declarator
     l = [l[-1]] + l[:-1]
     for prev, curr in zip(l[:-1], l[1:]):
         assert isinstance(curr, cpp.declarator.pointer) or isinstance(curr, cpp.declarator.array) or isinstance(
-            curr, cpp.function.function)
+            curr, cpp.function.declarator)
         curr.declarator = prev
     return l[-1]
 
@@ -85,13 +72,13 @@ def _create_declarator_impl(cursor: cci.Cursor) -> tuple[typing.Optional[cpp.dec
     curr = declarator
     while True:
         assert isinstance(curr, cpp.declarator.pointer) or isinstance(curr, cpp.declarator.array) or isinstance(
-            curr, cpp.function.function)
+            curr, cpp.function.declarator)
         if isinstance(curr, cpp.declarator.array):
             if len(children) and children[0].kind == cci.CursorKind.TYPE_REF:
                 children = children[1:]
             assert children[0].kind == cci.CursorKind.INTEGER_LITERAL
             children = children[1:]
-        elif isinstance(curr, cpp.function.function):
+        elif isinstance(curr, cpp.function.declarator):
             if len(children) and children[0].kind == cci.CursorKind.TYPE_REF:
                 children = children[1:]
             assert len(children) >= len(curr.parameter_list)
@@ -143,7 +130,7 @@ def _create_reversed_declarator(td: cci.Type) -> typing.Optional[cpp.declarator.
                     declarator=cpp.declarator.abstract(),
                     initializer=None,
                 ))
-        return cpp.function.function(
+        return cpp.function.declarator(
             declarator=_create_reversed_declarator(td.get_result()),
             parameter_list=parameter_list,
             const=cpp.cv.const() if td.is_const_qualified() else None,
@@ -347,25 +334,42 @@ def parse_statement(cursor: cci.Cursor) -> cpp.statement.statement:
         return result
 
 
-def parse(file: str, cursor: cci.Cursor) -> list[cpp.statement.statement]:
-    result: list[cpp.statement.statement] = []
+def parse(file: str, cursor: cci.Cursor) -> list[cpp.statement.location_statement]:
+    result: list[cpp.statement.location_statement] = []
     
     assert cursor.kind == cci.CursorKind.TRANSLATION_UNIT
     assert isinstance(cursor.location, cci.SourceLocation)
-    program_location = _get_location(file)
+    program_file: cpp.location.file = cpp.location.file(file)
     children = list(cursor.get_children())
     i = 0
     while i < len(children):
         child: cci.Cursor = children[i]
-        location: cci.SourceLocation = child.location
-        if location.file is not None and _get_location(location.file.name) != program_location:
+        extent: cci.SourceRange = child.extent
+        start_location: cci.SourceLocation = extent.start
+        end_location: cci.SourceLocation = extent.end
+        if start_location.file is None:
             i += 1
             continue
-        # if not _using_enum_or_class_filter(children, i):
-        #     i += 1
-        #     continue
+        assert end_location.file is not None
+        child_location = cpp.location.source_range(
+            file=cpp.location.file(start_location.file.name),
+            start=cpp.location.position(
+                line=start_location.line,
+                column=start_location.column
+            ),
+            end=cpp.location.position(
+                line=end_location.line,
+                column=end_location.column
+            ),
+        )
+        if child_location.file != program_file:
+            i += 1
+            continue
         statement = parse_statement(child)
-        result.append(statement)
+        result.append(cpp.statement.location_statement(
+            extent=child_location,
+            stmt=statement,
+        ))
         i += 1
     
     return result

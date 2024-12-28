@@ -2,6 +2,7 @@ import copy
 from dataclasses import dataclass
 
 from .keyword import keyword, keyword_enum
+from .name import depender, name
 '''
 specifier
     keyword_specifier
@@ -90,30 +91,39 @@ class auto(simple_type, _keyword_specifier):
 
 
 @dataclass
-class decltype(simple_type, _keyword_specifier):
+class decltype(simple_type, _keyword_specifier, depender):
     from .name import name as _name
     entry: _name
     
     def __init__(self, entry: _name):
         self.entry = copy.deepcopy(entry)
+        
+    def get_depend_names(self) -> set[name]:
+        return {self.entry}
 
 
 @dataclass
-class declared_type(simple_type):
+class declared_type(simple_type, depender):
     from .name import name as _name
     name: _name
     
     def __init__(self, name: _name):
         self.name = copy.deepcopy(name)
+        
+    def get_depend_names(self) -> set[name]:
+        return {self.name}
 
 
 @dataclass
-class elaborated_type(typed):
+class elaborated_type(typed, depender):
     from .keyword import class_ as _class
     from .keyword import enum as _enum
     
     key: _class | _enum
     identifier: declared_type
+    
+    def get_depend_names(self) -> set[name]:
+        return self.identifier.get_depend_names()
 
 
 @dataclass

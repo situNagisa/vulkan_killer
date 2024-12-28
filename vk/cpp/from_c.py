@@ -1,11 +1,12 @@
 import copy
+import logging
 
 import past.language as cpp
-from ..c.program import program
 
 import vk.lang.statement as vls
 import vk.lang.name as vln
 import vk.lang.category as vlc
+from ..lang.module import key
 
 
 def _create_constant(type_mangling: cpp.name.name, id: str, value: str) -> cpp.symbol.symbol:
@@ -33,12 +34,13 @@ def _create_constant(type_mangling: cpp.name.name, id: str, value: str) -> cpp.s
         )
     )
 
-def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
+def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name, vls.vk]) -> dict[cpp.name.name, vls.plus_plus]:
     pfns: list[int] = []
-    stmt_list: list[vls.statement] = []
-    for mangling, symbol in p.symbol_table.items():
-        stmt_c = vlc.stmt.create_from_symbol(symbol)
-        c_c = vlc.c_symbol.create(stmt_c, symbol)
+    stmt_list: list[vls.plus_plus] = []
+    for mangling, vk_stmt in p.items():
+        location: cpp.location.source_location = vk_stmt.location
+        symbol: cpp.symbol.symbol = vk_stmt.symbol
+        c_c = vk_stmt.c_category
         trait = vln.identifier(symbol.mangling.spelling)
         
         if c_c == vlc.c_symbol.none:
@@ -61,16 +63,20 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
                             vlc.c_symbol.flag64_bit_v,
                         ]:
                 new_symbol = _create_constant(symbol.type_id.decl_specifier_seq[0].name, symbol.name.spelling, symbol.initializer.expression.evaluate())
-            stmt_list.append(vls.statement(
-                category=vlc.cpp_symbol[c_c.name],
+            stmt_list.append(vls.plus_plus(
+                module_key=module_keys[mangling],
+                mangling_category=vlc.mangling.none,
+                cpp_category=vlc.cpp_symbol[c_c.name],
                 symbol=new_symbol,
             ))
             continue
         if c_c == vlc.c_symbol.handle_struct:
             continue
         if c_c == vlc.c_symbol.handle:
-            stmt_list.append(vls.statement(
-                category=vlc.cpp_symbol.handle,
+            stmt_list.append(vls.plus_plus(
+                module_key=module_keys[mangling],
+                mangling_category=vlc.mangling.none,
+                cpp_category=vlc.cpp_symbol.handle,
                 symbol=cpp.symbol.symbol(
                     type_id=cpp.type.type_id(
                         decl_specifier_seq=[cpp.class_.class_(
@@ -92,8 +98,10 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
             ))
             continue
         if c_c == vlc.c_symbol.enum:
-            new = vls.statement(
-                category=vlc.cpp_symbol.enum,
+            new = vls.plus_plus(
+                module_key=module_keys[mangling],
+                mangling_category=vlc.mangling.none,
+                cpp_category=vlc.cpp_symbol.enum,
                 symbol=copy.deepcopy(symbol),
             )
             stmt_list.append(new)
@@ -109,12 +117,14 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
                 if trait.company == e_t.company and trait.ext == e_t.ext:
                     i += 1
                     continue
-                enumerators.append(vls.statement(
-                    category=vlc.cpp_symbol.enumerator,
+                enumerators.append(vls.plus_plus(
+                    module_key=module_keys[mangling],
+                    mangling_category=vlc.mangling.none,
+                    cpp_category=vlc.cpp_symbol.enumerator,
                     symbol=_create_constant(symbol.mangling, e.identifier, str(spe.evaluate(i)))
                 ))
                 del spe.enumerator_list[i]
-            def sort_callback(s: vls.statement):
+            def sort_callback(s: vls.plus_plus):
                 trait = vln.identifier(s.symbol.mangling.spelling)
                 return trait.company
             
@@ -134,26 +144,32 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
             assert e_t.max_enum
             max_enum = _create_constant(mangling, spe.enumerator_list[-1].identifier, str(spe.evaluate(len(spe.enumerator_list) - 1)))
             max_enum.mangling = mangling
-            stmt_list.append(vls.statement(
-                category=vlc.cpp_symbol.max_enum,
+            stmt_list.append(vls.plus_plus(
+                module_key=module_keys[mangling],
+                mangling_category=vlc.mangling.none,
+                cpp_category=vlc.cpp_symbol.max_enum,
                 symbol=max_enum,
             ))
             
             enumerators = []
             for i, e in enumerate(spe.enumerator_list[:-1]):
-                enumerators.append(vls.statement(
-                    category=vlc.cpp_symbol.flag_bit_v,
+                enumerators.append(vls.plus_plus(
+                    module_key=module_keys[mangling],
+                    mangling_category=vlc.mangling.none,
+                    cpp_category=vlc.cpp_symbol.flag_bit_v,
                     symbol=_create_constant(mangling, e.identifier, str(spe.evaluate(i)))
                 ))
-            def sort_callback(s: vls.statement):
+            def sort_callback(s: vls.plus_plus):
                 trait = vln.enumerator(mangling.spelling, s.symbol.mangling.spelling)
                 return trait.company
             stmt_list += list(sorted(enumerators, key=sort_callback))
         
         if c_c == vlc.c_symbol.pfn:
             pfns.append(len(stmt_list))
-            stmt_list.append(vls.statement(
-                category=vlc.cpp_symbol.pfn,
+            stmt_list.append(vls.plus_plus(
+                module_key=module_keys[mangling],
+                mangling_category=vlc.mangling.none,
+                cpp_category=vlc.cpp_symbol.pfn,
                 symbol=copy.deepcopy(symbol),
             ))
             continue
@@ -161,17 +177,21 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
             pfn = None
             i = len(pfns)
             while i > 0:
-                assert stmt_list[pfns[i - 1]].category == vlc.cpp_symbol.pfn
+                assert stmt_list[pfns[i - 1]].cpp_category == vlc.cpp_symbol.pfn
                 pfn = stmt_list[pfns[i - 1]].symbol
                 if pfn.name.spelling != f"PFN_{symbol.name.spelling}":
                     i -= 1
                     continue
-                stmt_list[pfns[i - 1]] = vls.statement(
-                    category=vlc.cpp_symbol.function,
+                stmt_list[pfns[i - 1]] = vls.plus_plus(
+                    module_key=module_keys[mangling],
+                    mangling_category=vlc.mangling.none,
+                    cpp_category=vlc.cpp_symbol.function,
                     symbol=copy.deepcopy(symbol)
                 )
-                stmt_list.append(vls.statement(
-                    category=vlc.cpp_symbol.pfn_decl,
+                stmt_list.append(vls.plus_plus(
+                    module_key=module_keys[mangling],
+                    mangling_category=vlc.mangling.none,
+                    cpp_category=vlc.cpp_symbol.pfn_decl,
                     symbol=cpp.symbol.symbol(
                         type_id=cpp.type.type_id(
                             decl_specifier_seq=[cpp.specifier.decltype(
@@ -193,7 +213,7 @@ def parse_c_program(p: program) -> dict[cpp.name.name, vls.statement]:
             assert pfn is not None
             continue
         
-    result: dict[cpp.name.name, vls.statement] = {}
+    result: dict[cpp.name.name, vls.plus_plus] = {}
     for s in stmt_list:
         if s.symbol.mangling not in result.keys():
             result[copy.deepcopy(s.symbol.mangling)] = s

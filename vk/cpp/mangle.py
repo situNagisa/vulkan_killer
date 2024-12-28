@@ -43,7 +43,7 @@ def _std_int32_max() -> str:
     return '::std::numeric_limits<::std::int32_t>::max()'
 
 
-def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.symbol_table) -> cpp.name.name:
+def _mangle(api: str, mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.symbol_table) -> cpp.name.name:
     assert mc != category_mangling.none
     namespace: list[str] = copy.deepcopy(symbol.name.namespace)
     spelling: str = symbol.name.spelling
@@ -52,14 +52,14 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
         assert isinstance(symbol.initializer.expression, cpp.expression.static_cast)
         _spe = symbol.initializer.expression.cast_to.decl_specifier_seq[0]
         assert isinstance(_spe, cpp.specifier.declared_type)
-        enum = table[_spe.name]
+        enum = table(_spe.name)
         trait = vk.lang.name.enumerator(enum.mangling.spelling, symbol.mangling.spelling)
     else:
         enum = None
         trait = vk.lang.name.identifier(symbol.mangling.spelling)
     
     if trait.api.lower() == 'vk':
-        namespace.append('vulkan')
+        namespace.append(api)
     else:
         namespace.append(trait.api.lower())
     if trait.company:
@@ -143,7 +143,7 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
             if len(spe.name.namespace) < 2 or spe.name.namespace[:2] != ['', 'std']:
                 ref_trait = vk.lang.name.identifier(spe.name.spelling)
                 if ref_trait.id == trait.id:
-                    ref_symbol = table[spe.name]
+                    ref_symbol = table(spe.name)
                     ref_spe = ref_symbol.type_id.decl_specifier_seq[0]
                     if isinstance(ref_spe, cpp.enum.enum_specifier):
                         spelling += '_' + trait.company.lower()
@@ -174,7 +174,7 @@ def _mangle(mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.
                         member_spelling += '_'
                     spe = member.decl_specifier_seq[0]
                     if isinstance(spe, cpp.specifier.declared_type) and not spe.name.qualified_name.startswith('::std::'):
-                        ref_symbol = table[spe.name]
+                        ref_symbol = table(spe.name)
                         if member_spelling == ref_symbol.name.spelling:
                             member_spelling += '_'
                 if isinstance(declarator, cpp.init_declarator.init_declarator):
@@ -223,7 +223,7 @@ def _classify(category: symbols, symbol: cpp.symbol.symbol, table: cpp.symbol.sy
         assert isinstance(symbol.initializer.expression, cpp.expression.static_cast)
         spe = symbol.initializer.expression.cast_to.decl_specifier_seq[0]
         assert isinstance(spe, cpp.specifier.declared_type)
-        enum = table[spe.name]
+        enum = table(spe.name)
         enum_trait = vk.lang.name.identifier(enum.mangling.spelling)
         trait = vk.lang.name.enumerator(enum.mangling.spelling, symbol.mangling.spelling)
     else:
@@ -279,12 +279,13 @@ def _classify(category: symbols, symbol: cpp.symbol.symbol, table: cpp.symbol.sy
     raise 'fuck you'
 
 
-def mangle(program: dict[cpp.name.name, vls.statement]):
-    symbol_table: dict[cpp.name.name, cpp.symbol.symbol] = {}
+def mangle(api: str, program: dict[cpp.name.name, vls.plus_plus]):
+    def get_symbol_by_mangling(m: cpp.name.name) -> cpp.symbol.symbol:
+        return program[m].symbol
+        
     for mangling, vs in program.items():
-        symbol_table[mangling] = vs.symbol
-    for mangling, vs in program.items():
-        mc = _classify(vs.category, vs.symbol, symbol_table)
-        new_name = _mangle(mc, vs.symbol, symbol_table)
+        mc = _classify(vs.cpp_category, vs.symbol, get_symbol_by_mangling)
+        new_name = _mangle(api, mc, vs.symbol, get_symbol_by_mangling)
         vs.symbol.name.namespace = new_name.namespace
         vs.symbol.name.spelling = new_name.spelling
+        vs.mangling_category = mc
