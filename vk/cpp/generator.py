@@ -171,86 +171,88 @@ def generate(api: str, vkpp_module_struct: list[vk.lang.module.key], vkpp_module
         if module_key in generated_keys:
             continue
         module = vkpp_module_table[module_key.module]
-        component = module[module_key.component]
+        component: vk.lang.module.component = module[module_key.component]
         
-        component.other_depends = component.other_depends or set()
-        component.other_depends.add(environment_h.file)
-        coder = _code()
-        
-        def relative_name(name: cpp.name.name) -> str:
-            target_ns: list[str] = name.namespace + [name.spelling]
-            base = cpp.name.base_namespace(target_ns, coder.ns)
-            count = base
-            rn = target_ns[count:]
-            if base == len(coder.ns):
-                return cpp.name.relative_name(name, coder.ns)
+        for subcomponent in component.subcomponents:
+            subcomponent.other_depends = subcomponent.other_depends or set()
+            subcomponent.other_depends.add(environment_h.file)
+            coder = _code()
             
-            while True:
-                actual = root.find_namespace_on(coder.ns, [rn[0]])
-                if actual + rn == target_ns:
-                    break
-                assert count > 0
-                count -= 1
+            def relative_name(name: cpp.name.name) -> str:
+                target_ns: list[str] = name.namespace + [name.spelling]
+                base = cpp.name.base_namespace(target_ns, coder.ns)
+                count = base
                 rn = target_ns[count:]
+                if base == len(coder.ns):
+                    return cpp.name.relative_name(name, coder.ns)
+                
+                while True:
+                    actual = root.find_namespace_on(coder.ns, [rn[0]])
+                    if actual + rn == target_ns:
+                        break
+                    assert count > 0
+                    count -= 1
+                    rn = target_ns[count:]
+                
+                if count == 0 or count == 1:
+                    return name.qualified_name
+                assert rn[-1] == name.spelling
+                return cpp.name.qualified_name(name.spelling, rn[:-1])
             
-            if count == 0 or count == 1:
-                return name.qualified_name
-            assert rn[-1] == name.spelling
-            return cpp.name.qualified_name(name.spelling, rn[:-1])
-        
-        context = _generator_context(
-            api=api,
-            relative_name=relative_name,
-            table=get_symbol_by_mangling,
-        )
-        
-        coder.write_line(f"#pragma once")
-        coder.write_line()
-        
-        for depend_header in component.other_depends:
-            coder.write_line(f"#include <{depend_header}>")
-        for depend_header in component.depends:
-            coder.write_line(f"#include <{api}/{depend_header.module}/{depend_header.component}.h>")
-        coder.write_line()
-        
-        coder.write_line(_extension_guard(api, vk.lang.module.key(
-            module=module.name,
-            component=component.name,
-        )))
-        
-        for vkpp_symbol_mangling in component.symbols:
-            vs = vkpp_symbol_table[vkpp_symbol_mangling]
-            category: vlc.cpp_symbol = vs.cpp_category
-            symbol: cpp.symbol.symbol = vs.symbol
+            context = _generator_context(
+                api=api,
+                relative_name=relative_name,
+                table=get_symbol_by_mangling,
+            )
             
-            coder.change_namespace(symbol.name.namespace)
-            curr = root
-            for ns in symbol.name.namespace[1:] + [symbol.name.spelling]:
-                if ns not in curr:
-                    curr.add(node(ns))
-                curr = curr[ns]
+            coder.write_line(f"#pragma once")
+            coder.write_line()
             
-            assert category != vlc.cpp_symbol.none
+            for depend_header in subcomponent.other_depends:
+                coder.write_line(f"#include <{depend_header}>")
+            for depend_header in subcomponent.depends:
+                coder.write_line(f"#include <{api}/{depend_header.module}/{depend_header.component}/{depend_header.subcomponent}.h>")
+            coder.write_line()
             
-            if category == vlc.cpp_symbol.max_enum:
-                assert isinstance(symbol.initializer, cpp.initialization.copy)
-                v = int(symbol.initializer.expression.evaluate())
-                from .mangle import _is_int32_max, _std_int32_max
+            coder.write_line(_extension_guard(api, vk.lang.module.key(
+                module=module.name,
+                component=component.name,
+                subcomponent=subcomponent.name,
+            )))
+            
+            for vkpp_symbol_mangling in subcomponent.symbols:
+                vs = vkpp_symbol_table[vkpp_symbol_mangling]
+                category: vlc.cpp_symbol = vs.cpp_category
+                symbol: cpp.symbol.symbol = vs.symbol
+                
+                coder.change_namespace(symbol.name.namespace)
+                curr = root
+                for ns in symbol.name.namespace[1:] + [symbol.name.spelling]:
+                    if ns not in curr:
+                        curr.add(node(ns))
+                    curr = curr[ns]
+                
+                assert category != vlc.cpp_symbol.none
+                
+                if category == vlc.cpp_symbol.max_enum:
+                    assert isinstance(symbol.initializer, cpp.initialization.copy)
+                    v = int(symbol.initializer.expression.evaluate())
+                    from .mangle import _is_int32_max, _std_int32_max
+                    
+                    coder.write_line(
+                        f"using underlying_type = _calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
+                    continue
                 
                 coder.write_line(
-                    f"using underlying_type = _calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
-                continue
+                    _generate_statement(_create_statement_from_vs(vs, get_symbol_by_mangling), context))
             
-            coder.write_line(
-                _generate_statement(_create_statement_from_vs(vs, get_symbol_by_mangling), context))
-        
-        coder.change_namespace([''])
-        
-        result.add(generated_result(
-            file=f"{api}/{module.name}/{component.name}.h",
-            code=coder.data
-        ))
-        generated_keys.add(module_key)
+            coder.change_namespace([''])
+            
+            result.add(generated_result(
+                file=f"{api}/{module.name}/{component.name}/{subcomponent.name}.h",
+                code=coder.data
+            ))
+            generated_keys.add(module_key)
     
     return result
 
@@ -415,7 +417,7 @@ def _generate_declarator(d: cpp.declarator.declarator, context: _generator_conte
             result = f"({result})"
         return f"{result}[{d.count}]"
     if isinstance(d, cpp.function.declarator):
-        result = f"{context.api.upper()}_CALL {_generate_declarator(d.get_sub_declarator(), context)}"
+        result = f"{_generate_declarator(d.get_sub_declarator(), context)}"
         if isinstance(d.get_sub_declarator(), cpp.declarator.pointer):
             result = f"({result})"
         

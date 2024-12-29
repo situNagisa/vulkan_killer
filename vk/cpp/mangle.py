@@ -43,7 +43,9 @@ def _std_int32_max() -> str:
     return '::std::numeric_limits<::std::int32_t>::max()'
 
 
-def _mangle(api: str, mc: category_mangling, symbol: cpp.symbol.symbol, table: cpp.symbol.symbol_table) -> cpp.name.name:
+def _mangle(api: str, vkpp_symbol: vls.plus_plus, table: cpp.symbol.symbol_table):
+    mc = vkpp_symbol.mangling_category
+    symbol = vkpp_symbol.symbol
     assert mc != category_mangling.none
     namespace: list[str] = copy.deepcopy(symbol.name.namespace)
     spelling: str = symbol.name.spelling
@@ -58,6 +60,11 @@ def _mangle(api: str, mc: category_mangling, symbol: cpp.symbol.symbol, table: c
         enum = None
         trait = vk.lang.name.identifier(symbol.mangling.spelling)
     
+    # module
+    assert vkpp_symbol.module_key.subcomponent == 'unknown'
+    vkpp_symbol.module_key.subcomponent = 'function' if vkpp_symbol.cpp_category in [symbols.function, symbols.pfn_decl] else 'type'
+    
+    # name
     if trait.api.lower() == 'vk':
         namespace.append(api)
     else:
@@ -209,10 +216,8 @@ def _mangle(api: str, mc: category_mangling, symbol: cpp.symbol.symbol, table: c
     
     spelling = _preventing_name_collisions(spelling)
     
-    return cpp.name.name(
-        namespace=namespace,
-        spelling=spelling,
-    )
+    vkpp_symbol.symbol.name.spelling = spelling
+    vkpp_symbol.symbol.name.namespace = namespace
 
 
 def _classify(category: symbols, symbol: cpp.symbol.symbol, table: cpp.symbol.symbol_table) -> category_mangling:
@@ -284,8 +289,5 @@ def mangle(api: str, program: dict[cpp.name.name, vls.plus_plus]):
         return program[m].symbol
         
     for mangling, vs in program.items():
-        mc = _classify(vs.cpp_category, vs.symbol, get_symbol_by_mangling)
-        new_name = _mangle(api, mc, vs.symbol, get_symbol_by_mangling)
-        vs.symbol.name.namespace = new_name.namespace
-        vs.symbol.name.spelling = new_name.spelling
-        vs.mangling_category = mc
+        vs.mangling_category = _classify(vs.cpp_category, vs.symbol, get_symbol_by_mangling)
+        _mangle(api, vs, get_symbol_by_mangling)

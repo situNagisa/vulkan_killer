@@ -2,7 +2,7 @@ import dataclasses
 
 import clang.cindex as cci
 import past.language as cpp
-from ..lang.module import macro_module_info, module_table, module, component, key
+from ..lang.module import macro_module_info, module_table, module, component, key, subcomponent
 from ..lang.name import generate_module_key, core_module, extension_module, extension_category
 from ..lang.name import module as module_trait
 
@@ -73,8 +73,7 @@ def module_struct(file: str) -> tuple[module_table, list[tuple[cpp.location.sour
         c = component(
             name=info.key.component,
             version=info.version if isinstance(info.version, int) else None,
-            symbols=[],
-            depends=set[key](),
+            subcomponents=[],
         )
         m.components.append(c)
         

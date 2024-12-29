@@ -64,7 +64,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
                         ]:
                 new_symbol = _create_constant(symbol.type_id.decl_specifier_seq[0].name, symbol.name.spelling, symbol.initializer.expression.evaluate())
             stmt_list.append(vls.plus_plus(
-                module_key=module_keys[mangling],
+                module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
                 cpp_category=vlc.cpp_symbol[c_c.name],
                 symbol=new_symbol,
@@ -74,7 +74,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
             continue
         if c_c == vlc.c_symbol.handle:
             stmt_list.append(vls.plus_plus(
-                module_key=module_keys[mangling],
+                module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
                 cpp_category=vlc.cpp_symbol.handle,
                 symbol=cpp.symbol.symbol(
@@ -99,7 +99,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
             continue
         if c_c == vlc.c_symbol.enum:
             new = vls.plus_plus(
-                module_key=module_keys[mangling],
+                module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
                 cpp_category=vlc.cpp_symbol.enum,
                 symbol=copy.deepcopy(symbol),
@@ -118,7 +118,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
                     i += 1
                     continue
                 enumerators.append(vls.plus_plus(
-                    module_key=module_keys[mangling],
+                module_key=copy.deepcopy(module_keys[mangling]),
                     mangling_category=vlc.mangling.none,
                     cpp_category=vlc.cpp_symbol.enumerator,
                     symbol=_create_constant(symbol.mangling, e.identifier, str(spe.evaluate(i)))
@@ -145,7 +145,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
             max_enum = _create_constant(mangling, spe.enumerator_list[-1].identifier, str(spe.evaluate(len(spe.enumerator_list) - 1)))
             max_enum.mangling = mangling
             stmt_list.append(vls.plus_plus(
-                module_key=module_keys[mangling],
+                module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
                 cpp_category=vlc.cpp_symbol.max_enum,
                 symbol=max_enum,
@@ -154,7 +154,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
             enumerators = []
             for i, e in enumerate(spe.enumerator_list[:-1]):
                 enumerators.append(vls.plus_plus(
-                    module_key=module_keys[mangling],
+                    module_key=copy.deepcopy(module_keys[mangling]),
                     mangling_category=vlc.mangling.none,
                     cpp_category=vlc.cpp_symbol.flag_bit_v,
                     symbol=_create_constant(mangling, e.identifier, str(spe.evaluate(i)))
@@ -167,7 +167,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
         if c_c == vlc.c_symbol.pfn:
             pfns.append(len(stmt_list))
             stmt_list.append(vls.plus_plus(
-                module_key=module_keys[mangling],
+                module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
                 cpp_category=vlc.cpp_symbol.pfn,
                 symbol=copy.deepcopy(symbol),
@@ -183,13 +183,13 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
                     i -= 1
                     continue
                 stmt_list[pfns[i - 1]] = vls.plus_plus(
-                    module_key=module_keys[mangling],
+                    module_key=copy.deepcopy(module_keys[mangling]),
                     mangling_category=vlc.mangling.none,
                     cpp_category=vlc.cpp_symbol.function,
                     symbol=copy.deepcopy(symbol)
                 )
                 stmt_list.append(vls.plus_plus(
-                    module_key=module_keys[mangling],
+                    module_key=copy.deepcopy(module_keys[mangling]),
                     mangling_category=vlc.mangling.none,
                     cpp_category=vlc.cpp_symbol.pfn_decl,
                     symbol=cpp.symbol.symbol(

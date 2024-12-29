@@ -8,6 +8,8 @@ profile_output.prof
 test.h
 test_vulkan.h
 
+data_struct/__pycache__
+
 past/__pycache__
 past/language/__pycache__
 

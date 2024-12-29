@@ -321,11 +321,13 @@ def generate_module_key(m: module):
     if isinstance(m.info, core_module):
         return key(
             module='core',
-            component=f"{m.info.major}_{m.info.minor}"
+            component=f"{m.info.major}_{m.info.minor}",
+            subcomponent='unknown',
         )
     if isinstance(m.info, extension_module):
         return key(
             module=m.info.company.lower(),
-            component='_'.join([word.lower() for word in m.info.name])
+            component='_'.join([word.lower() for word in m.info.name]),
+            subcomponent='unknown',
         )
     return None

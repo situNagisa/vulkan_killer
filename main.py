@@ -20,8 +20,8 @@ def main():
                         handlers=[logging.StreamHandler()])  # 设置输出到控制台
     
     # file = './test.h'
-    file = './vulkan/vulkan_core.h'
-    # file = './vulkan_core.h'
+    # file = './vulkan/vulkan_core.h'
+    file = './vulkan_core.h'
     index = CX.Index.create(excludeDecls=True)
     tu = index.parse(file,
                      args=['-DVKAPI_PTR=__stdcall'])  # options=CX.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
@@ -52,7 +52,7 @@ def main():
             f.write(g.code)
             f.write('\n')
         logging.info(f"write result to {g.file}")
-    
+        
     
 
 if __name__ == '__main__':
