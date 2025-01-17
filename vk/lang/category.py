@@ -36,32 +36,26 @@ class stmt(enum.Enum):
         return self in [stmt.typedef, stmt.class_, stmt.enum]
     
     def is_value(self) -> bool:
-        return self in [stmt.function, stmt.variable]
+        return self in [stmt.function, stmt.variable, stmt.enum]
     
     @staticmethod
-    def create(s: cpp.statement.statement, table: cpp.symbol.symbol_table):
-        if not isinstance(s, cpp.declaration.simple):
-            return stmt.none
-        if len(s.export_symbol_seq(table)) != 1:
-            return stmt.none
-        return stmt.create_from_symbol(s.export_symbol_seq(table)[0])
-    
-    @staticmethod
-    def create_from_symbol(s: cpp.symbol.symbol):
+    def symbol_be_declared_on(s: cpp.symbol.symbol):
+        spe_seq = cpp.specifier_seq.typed_only(s.type_id.decl_specifier_seq)
         if s.category == cpp.symbol.category.type:
             assert s.initializer is None
-            if len(s.type_id.decl_specifier_seq) == 1 \
-                    and isinstance(s.type_id.decl_specifier_seq[0], cpp.name.name_introducer) \
-                    and s.type_id.decl_specifier_seq[0].introduced_name() == s.name:
-                if isinstance(s.type_id.decl_specifier_seq[0], cpp.class_.class_):
-                    return stmt.class_
-                if isinstance(s.type_id.decl_specifier_seq[0], cpp.enum.enum_specifier):
-                    return stmt.enum
-                return stmt.none
+            if len(spe_seq) == 1:
+                spe = spe_seq[0]
+                if isinstance(spe, cpp.name.name_introducer) and spe.introduced_name() == s.name:
+                    if isinstance(spe, cpp.class_.class_):
+                        return stmt.class_
+                    if isinstance(spe, cpp.enum.enum_specifier):
+                        return stmt.enum
             return stmt.typedef
         if s.category == cpp.symbol.category.value:
             if isinstance(s.type_id.declarator, cpp.function.declarator):
                 return stmt.function
+            if len(spe_seq) == 1 and isinstance(spe_seq[0], cpp.specifier.declared_type):
+                return stmt.enum
             if isinstance(s.type_id.declarator, cpp.declarator.abstract):
                 return stmt.variable
         return stmt.none
@@ -140,6 +134,7 @@ class c_symbol(enum.Enum):
     <pfn>
     <type> <type> <function<pointer>>
     """
+    enumerator = 212
     
     @staticmethod
     def create(c: stmt, s: cpp.symbol.symbol):
@@ -149,13 +144,25 @@ class c_symbol(enum.Enum):
                 assert s.initializer is None
                 return c_symbol.function
             if c == stmt.variable:
-                spes = [spe for spe in s.type_id.decl_specifier_seq if isinstance(spe, cpp.specifier.declared_type)]
-                assert len(spes) == 1
-                e_trait = identifier(spes[0].name.spelling)
+                spe: cpp.specifier.declared_type = cpp.specifier_seq.get_one_specifier_by_type(s.type_id.decl_specifier_seq, cpp.specifier.declared_type)
+                assert spe is not None
+                e_trait = identifier(spe.name.spelling)
                 assert e_trait.flag and e_trait.bit
-                trait = enumerator(spes[0].name.spelling, s.mangling.spelling)
+                trait = enumerator(spe.name.spelling, s.mangling.spelling)
                 assert e_trait.two == trait.two
                 assert isinstance(s.initializer, cpp.initialization.copy)
+                if trait.two:
+                    return c_symbol.flag64_bit_v
+                return c_symbol.flag_bit_v
+            if c == stmt.enum:
+                spe: cpp.specifier.declared_type = cpp.specifier_seq.get_one_specifier_by_type(s.type_id.decl_specifier_seq, cpp.specifier.declared_type)
+                assert spe is not None
+                e_trait = identifier(spe.name.spelling)
+                if not e_trait.flag:
+                    return c_symbol.enumerator
+                assert e_trait.bit
+                trait = enumerator(spe.name.spelling, s.mangling.spelling)
+                assert e_trait.two == trait.two
                 if trait.two:
                     return c_symbol.flag64_bit_v
                 return c_symbol.flag_bit_v
@@ -187,7 +194,7 @@ class c_symbol(enum.Enum):
                         if trait.two:
                             return c_symbol.flag64_bit if trait.bit else c_symbol.flag64
                         # assert trait.bit
-                        return c_symbol.flag_bit
+                        return c_symbol.flag_bit if trait.bit else c_symbol.flag
                     if trait.flag:
                         if trait.bit:
                             return c_symbol.flag64_bit if trait.two else c_symbol.flag_bit
@@ -244,13 +251,15 @@ class cpp_symbol(enum.Enum):
     """
     <enum>::<id>
     """
-    max_enum = 104
+    inner_enumerator = 104
+    
+    max_enum = 105
     """
     <enum>_bits::underlying_type
     """
     
     def is_enumerator(self) -> bool:
-        return cpp_symbol.flag_bit_v.value <= self.value <= cpp_symbol.enumerator.value
+        return cpp_symbol.flag_bit_v.value <= self.value <= cpp_symbol.inner_enumerator.value
     
     def is_value(self) -> bool:
         return cpp_symbol.function.value <= self.value <= cpp_symbol.max_enum.value
@@ -277,6 +286,8 @@ class cpp_symbol(enum.Enum):
     
     pfn = 250
     pfn_decl = 251
+    
+    vulkan_c_api = 300
     
 
     def is_type(self) -> bool:

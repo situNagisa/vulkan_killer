@@ -10,6 +10,8 @@ from vk.cpp.from_c import parse_c_program
 import vk.cpp.generator
 import vk.cpp.mangle
 import vk.cpp.module
+import vk.cpp.structure_type
+import vk.cpp.vulkan_c_type
 import vk.c.module
 
 import logging
@@ -20,8 +22,8 @@ def main():
                         handlers=[logging.StreamHandler()])  # 设置输出到控制台
     
     # file = './test.h'
-    # file = './vulkan/vulkan_core.h'
-    file = './vulkan_core.h'
+    file = './vulkan/vulkan_core.h'
+    # file = './vulkan_core.h'
     index = CX.Index.create(excludeDecls=True)
     tu = index.parse(file,
                      args=['-DVKAPI_PTR=__stdcall'])  # options=CX.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
@@ -42,6 +44,9 @@ def main():
     
     vk.cpp.mangle.mangle(api, vkpp_symbol_table)
     logging.info(f"mangle cpp symbols successfully")
+    
+    vk.cpp.structure_type.structure_type(vkpp_symbol_table)
+    vk.cpp.vulkan_c_type.vulkan_c_type(api, vkpp_symbol_table)
     
     vk.cpp.module.make_module_table(table, vkpp_symbol_table)
     

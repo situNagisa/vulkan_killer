@@ -87,6 +87,10 @@ class identifier(primary):
     
     entry: _name
     
+    def __init__(self, entry: _name):
+        super().__init__(category=value_category.left)
+        self.entry = entry
+    
     def evaluate(self):
         return self.entry
     

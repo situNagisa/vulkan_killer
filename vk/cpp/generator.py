@@ -116,6 +116,11 @@ namespace vulkan_killer {
 \tusing _calculate_enum_underlying_type_t = typename _calculate_enum_underlying_type<MaxEnum, MinEnum>::type;
 \t
 \tstatic_assert(sizeof(::std::uintptr_t) == sizeof(::std::uint64_t));
+\t
+\ttemplate<class T>
+\tstruct vulkan_c_type{ using type = T; };
+\ttemplate<class T> requires requires { typename vulkan_c_type<T>::type; }
+\tusing vulkan_c_type_t = typename vulkan_c_type<T>::type;
 }
 
 """
@@ -225,6 +230,9 @@ def generate(api: str, vkpp_module_struct: list[vk.lang.module.key], vkpp_module
                 category: vlc.cpp_symbol = vs.cpp_category
                 symbol: cpp.symbol.symbol = vs.symbol
                 
+                if vs.cpp_category == vlc.cpp_symbol.inner_enumerator:
+                    continue
+                
                 coder.change_namespace(symbol.name.namespace)
                 curr = root
                 for ns in symbol.name.namespace[1:] + [symbol.name.spelling]:
@@ -234,14 +242,21 @@ def generate(api: str, vkpp_module_struct: list[vk.lang.module.key], vkpp_module
                 
                 assert category != vlc.cpp_symbol.none
                 
-                if category == vlc.cpp_symbol.max_enum:
-                    assert isinstance(symbol.initializer, cpp.initialization.copy)
-                    v = int(symbol.initializer.expression.evaluate())
-                    from .mangle import _is_int32_max, _std_int32_max
-                    
-                    coder.write_line(
-                        f"using underlying_type = _calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
-                    continue
+                match category:
+                    case vlc.cpp_symbol.max_enum:
+                        assert isinstance(symbol.initializer, cpp.initialization.copy)
+                        v = int(symbol.initializer.expression.evaluate())
+                        from .mangle import _is_int32_max, _std_int32_max
+                        
+                        coder.write_line(
+                            f"using underlying_type = _calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
+                        continue
+                    case vlc.cpp_symbol.vulkan_c_api:
+                        m: cpp.name.name = symbol.type_id.decl_specifier_seq[0].bases[0].class_or_computed.name
+                        coder.write_line(
+                            f"template<> struct vulkan_c_type<{context.relative_name(context.table(m).name)}> {{ using type = {m.qualified_name}; }};"
+                        )
+                        continue
                 
                 coder.write_line(
                     _generate_statement(_create_statement_from_vs(vs, get_symbol_by_mangling), context))
@@ -381,8 +396,7 @@ def _generate_expression(e: cpp.expression.expression, context: _generator_conte
             return str(e.value)
         if isinstance(e, cpp.expression.identifier):
             symbol = context.table(e.entry)
-            assert isinstance(symbol, cpp.declarator.declarator)
-            return context.relative_name(symbol.introduced_name())
+            return context.relative_name(symbol.name)
         raise 'fuck you'
     if isinstance(e, cpp.expression.conversion):
         if isinstance(e, cpp.expression.static_cast):

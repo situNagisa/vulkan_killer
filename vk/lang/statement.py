@@ -23,7 +23,7 @@ class vk:
     
     @property
     def stmt_category(self) -> _stmt:
-        return _stmt.create_from_symbol(self.symbol)
+        return _stmt.symbol_be_declared_on(self.symbol)
     
     @property
     def c_category(self) -> _c_symbol:

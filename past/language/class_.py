@@ -7,9 +7,9 @@ from .name import name_introducer, depender, collect_depend_name_from_iterable, 
 
 @dataclass
 class base_clause(depender):
-    from .keyword import access
+    from .keyword import access as _access
     attribute: list[str]
-    access_specifier: access
+    access_specifier: typing.Optional[_access]
     virtual: bool
     class_or_computed: declared_type | decltype
     

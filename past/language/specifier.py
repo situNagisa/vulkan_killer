@@ -105,6 +105,7 @@ class decltype(simple_type, _keyword_specifier, depender):
 @dataclass
 class declared_type(simple_type, depender):
     from .name import name as _name
+    from .symbol import symbol_table
     name: _name
     
     def __init__(self, name: _name):
@@ -112,6 +113,8 @@ class declared_type(simple_type, depender):
         
     def get_depend_names(self) -> set[name]:
         return {self.name}
+    
+    
 
 
 @dataclass

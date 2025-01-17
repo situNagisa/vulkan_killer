@@ -170,7 +170,7 @@ def _mangle(api: str, vkpp_symbol: vls.plus_plus, table: cpp.symbol.symbol_table
                 else:
                     raise 'fuck you'
                 if member_spelling == 'sType':
-                    member_spelling = 'structure_type'
+                    member_spelling = '_structure_type'
                 elif member_spelling == 'pNext':
                     member_spelling = 'structure_next'
                 else:
@@ -201,7 +201,7 @@ def _mangle(api: str, vkpp_symbol: vls.plus_plus, table: cpp.symbol.symbol_table
     elif mc.is_using():
         spe = symbol.type_id.decl_specifier_seq[0]
         assert isinstance(spe, cpp.specifier.declared_type)
-        ref_symbol = table[spe.name]
+        ref_symbol = table(spe.name)
         spelling = ref_symbol.name.spelling
         if trait.company and isinstance(ref_symbol.type_id.decl_specifier_seq[0], cpp.enum.enum_specifier):
             spelling += '_' + trait.company.lower()
@@ -247,7 +247,7 @@ def _classify(category: symbols, symbol: cpp.symbol.symbol, table: cpp.symbol.sy
         if trait.bit:
             return category_mangling.flag_bit_bit_v
         return category_mangling.flag_bit_v
-    if category == symbols.enumerator:
+    if category in [symbols.enumerator, symbols.inner_enumerator]:
         if trait.none:
             return category_mangling.enumerator_none
         return category_mangling.enumerator

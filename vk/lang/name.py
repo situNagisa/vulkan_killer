@@ -241,6 +241,9 @@ class core_module:
     major: int
     minor: int
     
+    def __eq__(self, other) -> bool:
+        return self.major == other.major and self.minor == other.minor
+    
 class extension_category(enum.Enum):
     guard = 0
     spec_version = 1
@@ -252,10 +255,16 @@ class extension_module:
     name: list[str]
     category: extension_category
     
+    def __eq__(self, other) -> bool:
+        return self.company == other.company and self.name == other.name and self.category == other.category
+    
 @dataclasses.dataclass
 class module:
     api: str
     info: typing.Optional[core_module | extension_module]
+    
+    def __eq__(self, other) -> bool:
+        return self.api == other.api and self.info == other.info
     
     def __init__(self, sb_name: str):
         self.api = ''
