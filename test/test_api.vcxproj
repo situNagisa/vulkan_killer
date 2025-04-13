@@ -1,0 +1,917 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{a08ad596-d303-4737-8d49-e965500ca0a1}</ProjectGuid>
+    <RootNamespace>test_api</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>test_api</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VS_PROP_ROOT)\nagisa.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VS_PROP_ROOT)\nagisa.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VS_PROP_ROOT)\nagisa.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VS_PROP_ROOT)\nagisa.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+    <PublicModuleDirectories>
+    </PublicModuleDirectories>
+    <IncludePath>$(ProjectDir)\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+    <PublicModuleDirectories>
+    </PublicModuleDirectories>
+    <IncludePath>$(ProjectDir)\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+    <PublicModuleDirectories>
+    </PublicModuleDirectories>
+    <IncludePath>$(ProjectDir)\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+    <CopyLocalDebugSymbols>true</CopyLocalDebugSymbols>
+    <CopyCppRuntimeToOutputDir>true</CopyCppRuntimeToOutputDir>
+    <PublicModuleDirectories>
+    </PublicModuleDirectories>
+    <IncludePath>$(ProjectDir)\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <EnableModules>true</EnableModules>
+      <BuildStlModules>true</BuildStlModules>
+      <AdditionalModuleDependencies>
+      </AdditionalModuleDependencies>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <EnableModules>true</EnableModules>
+      <BuildStlModules>true</BuildStlModules>
+      <AdditionalModuleDependencies>
+      </AdditionalModuleDependencies>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <EnableModules>true</EnableModules>
+      <BuildStlModules>true</BuildStlModules>
+      <AdditionalModuleDependencies>
+      </AdditionalModuleDependencies>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <EnableModules>true</EnableModules>
+      <BuildStlModules>true</BuildStlModules>
+      <AdditionalModuleDependencies>
+      </AdditionalModuleDependencies>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="aaa.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="context.h" />
+    <ClInclude Include="environment.h" />
+    <ClInclude Include="test_vulkan.h" />
+    <ClInclude Include="vulkan_killer\amd\buffer_marker\function.h" />
+    <ClInclude Include="vulkan_killer\amd\buffer_marker\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\device_coherent_memory\type.h" />
+    <ClInclude Include="vulkan_killer\amd\device_coherent_memory\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\display_native_hdr\function.h" />
+    <ClInclude Include="vulkan_killer\amd\display_native_hdr\type.h" />
+    <ClInclude Include="vulkan_killer\amd\display_native_hdr\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\draw_indirect_count\function.h" />
+    <ClInclude Include="vulkan_killer\amd\draw_indirect_count\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\memory_overallocation_behavior\type.h" />
+    <ClInclude Include="vulkan_killer\amd\memory_overallocation_behavior\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\pipeline_compiler_control\type.h" />
+    <ClInclude Include="vulkan_killer\amd\pipeline_compiler_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\rasterization_order\type.h" />
+    <ClInclude Include="vulkan_killer\amd\rasterization_order\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_core_properties\type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_core_properties\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_core_properties_2\type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_core_properties_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_early_and_late_fragment_tests\type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_early_and_late_fragment_tests\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_info\function.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_info\type.h" />
+    <ClInclude Include="vulkan_killer\amd\shader_info\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\amd\texture_gather_bias_lod\type.h" />
+    <ClInclude Include="vulkan_killer\amd\texture_gather_bias_lod\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\arm\rasterization_order_attachment_access\type.h" />
+    <ClInclude Include="vulkan_killer\arm\rasterization_order_attachment_access\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\arm\render_pass_striped\type.h" />
+    <ClInclude Include="vulkan_killer\arm\render_pass_striped\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\arm\scheduling_controls\type.h" />
+    <ClInclude Include="vulkan_killer\arm\scheduling_controls\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\arm\shader_core_builtins\type.h" />
+    <ClInclude Include="vulkan_killer\arm\shader_core_builtins\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\arm\shader_core_properties\type.h" />
+    <ClInclude Include="vulkan_killer\arm\shader_core_properties\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\core\1_0\function.h" />
+    <ClInclude Include="vulkan_killer\core\1_0\type.h" />
+    <ClInclude Include="vulkan_killer\core\1_0\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\core\1_1\function.h" />
+    <ClInclude Include="vulkan_killer\core\1_1\type.h" />
+    <ClInclude Include="vulkan_killer\core\1_1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\core\1_2\function.h" />
+    <ClInclude Include="vulkan_killer\core\1_2\type.h" />
+    <ClInclude Include="vulkan_killer\core\1_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\core\1_3\function.h" />
+    <ClInclude Include="vulkan_killer\core\1_3\type.h" />
+    <ClInclude Include="vulkan_killer\core\1_3\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\core\environment.h" />
+    <ClInclude Include="vulkan_killer\ext\4444_formats\type.h" />
+    <ClInclude Include="vulkan_killer\ext\4444_formats\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\acquire_drm_display\function.h" />
+    <ClInclude Include="vulkan_killer\ext\acquire_drm_display\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\astc_decode_mode\type.h" />
+    <ClInclude Include="vulkan_killer\ext\astc_decode_mode\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\attachment_feedback_loop_dynamic_state\function.h" />
+    <ClInclude Include="vulkan_killer\ext\attachment_feedback_loop_dynamic_state\type.h" />
+    <ClInclude Include="vulkan_killer\ext\attachment_feedback_loop_dynamic_state\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\attachment_feedback_loop_layout\type.h" />
+    <ClInclude Include="vulkan_killer\ext\attachment_feedback_loop_layout\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\blend_operation_advanced\type.h" />
+    <ClInclude Include="vulkan_killer\ext\blend_operation_advanced\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\border_color_swizzle\type.h" />
+    <ClInclude Include="vulkan_killer\ext\border_color_swizzle\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\buffer_device_address\function.h" />
+    <ClInclude Include="vulkan_killer\ext\buffer_device_address\type.h" />
+    <ClInclude Include="vulkan_killer\ext\buffer_device_address\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\calibrated_timestamps\function.h" />
+    <ClInclude Include="vulkan_killer\ext\calibrated_timestamps\type.h" />
+    <ClInclude Include="vulkan_killer\ext\calibrated_timestamps\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\color_write_enable\function.h" />
+    <ClInclude Include="vulkan_killer\ext\color_write_enable\type.h" />
+    <ClInclude Include="vulkan_killer\ext\color_write_enable\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\conditional_rendering\function.h" />
+    <ClInclude Include="vulkan_killer\ext\conditional_rendering\type.h" />
+    <ClInclude Include="vulkan_killer\ext\conditional_rendering\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\conservative_rasterization\type.h" />
+    <ClInclude Include="vulkan_killer\ext\conservative_rasterization\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\custom_border_color\type.h" />
+    <ClInclude Include="vulkan_killer\ext\custom_border_color\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_marker\function.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_marker\type.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_marker\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_report\function.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_report\type.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_report\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_utils\function.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_utils\type.h" />
+    <ClInclude Include="vulkan_killer\ext\debug_utils\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_bias_control\function.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_bias_control\type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_bias_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_clamp_zero_one\type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_clamp_zero_one\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_clip_control\type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_clip_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_clip_enable\type.h" />
+    <ClInclude Include="vulkan_killer\ext\depth_clip_enable\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\descriptor_buffer\function.h" />
+    <ClInclude Include="vulkan_killer\ext\descriptor_buffer\type.h" />
+    <ClInclude Include="vulkan_killer\ext\descriptor_buffer\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\descriptor_indexing\type.h" />
+    <ClInclude Include="vulkan_killer\ext\descriptor_indexing\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\device_address_binding_report\type.h" />
+    <ClInclude Include="vulkan_killer\ext\device_address_binding_report\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\device_fault\function.h" />
+    <ClInclude Include="vulkan_killer\ext\device_fault\type.h" />
+    <ClInclude Include="vulkan_killer\ext\device_fault\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\device_memory_report\type.h" />
+    <ClInclude Include="vulkan_killer\ext\device_memory_report\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\direct_mode_display\function.h" />
+    <ClInclude Include="vulkan_killer\ext\direct_mode_display\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\discard_rectangles\function.h" />
+    <ClInclude Include="vulkan_killer\ext\discard_rectangles\type.h" />
+    <ClInclude Include="vulkan_killer\ext\discard_rectangles\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\display_control\function.h" />
+    <ClInclude Include="vulkan_killer\ext\display_control\type.h" />
+    <ClInclude Include="vulkan_killer\ext\display_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\display_surface_counter\function.h" />
+    <ClInclude Include="vulkan_killer\ext\display_surface_counter\type.h" />
+    <ClInclude Include="vulkan_killer\ext\display_surface_counter\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\dynamic_rendering_unused_attachments\type.h" />
+    <ClInclude Include="vulkan_killer\ext\dynamic_rendering_unused_attachments\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state\function.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state\type.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state_2\function.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state_2\type.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state_3\function.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state_3\type.h" />
+    <ClInclude Include="vulkan_killer\ext\extended_dynamic_state_3\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\external_memory_acquire_unmodified\type.h" />
+    <ClInclude Include="vulkan_killer\ext\external_memory_acquire_unmodified\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\external_memory_host\function.h" />
+    <ClInclude Include="vulkan_killer\ext\external_memory_host\type.h" />
+    <ClInclude Include="vulkan_killer\ext\external_memory_host\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\filter_cubic\type.h" />
+    <ClInclude Include="vulkan_killer\ext\filter_cubic\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\fragment_density_map\type.h" />
+    <ClInclude Include="vulkan_killer\ext\fragment_density_map\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\fragment_density_map_2\type.h" />
+    <ClInclude Include="vulkan_killer\ext\fragment_density_map_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\fragment_shader_interlock\type.h" />
+    <ClInclude Include="vulkan_killer\ext\fragment_shader_interlock\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\frame_boundary\type.h" />
+    <ClInclude Include="vulkan_killer\ext\frame_boundary\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\global_priority\type.h" />
+    <ClInclude Include="vulkan_killer\ext\global_priority\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\global_priority_query\type.h" />
+    <ClInclude Include="vulkan_killer\ext\global_priority_query\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\graphics_pipeline_library\type.h" />
+    <ClInclude Include="vulkan_killer\ext\graphics_pipeline_library\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\hdr_metadata\function.h" />
+    <ClInclude Include="vulkan_killer\ext\hdr_metadata\type.h" />
+    <ClInclude Include="vulkan_killer\ext\hdr_metadata\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\headless_surface\function.h" />
+    <ClInclude Include="vulkan_killer\ext\headless_surface\type.h" />
+    <ClInclude Include="vulkan_killer\ext\headless_surface\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\host_image_copy\function.h" />
+    <ClInclude Include="vulkan_killer\ext\host_image_copy\type.h" />
+    <ClInclude Include="vulkan_killer\ext\host_image_copy\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\host_query_reset\function.h" />
+    <ClInclude Include="vulkan_killer\ext\host_query_reset\type.h" />
+    <ClInclude Include="vulkan_killer\ext\host_query_reset\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_2d_view_of_3d\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_2d_view_of_3d\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_compression_control\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_compression_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_compression_control_swapchain\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_compression_control_swapchain\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_drm_format_modifier\function.h" />
+    <ClInclude Include="vulkan_killer\ext\image_drm_format_modifier\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_drm_format_modifier\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_robustness\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_robustness\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_sliced_view_of_3d\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_sliced_view_of_3d\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_view_min_lod\type.h" />
+    <ClInclude Include="vulkan_killer\ext\image_view_min_lod\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\index_type_uint8\type.h" />
+    <ClInclude Include="vulkan_killer\ext\index_type_uint8\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\inline_uniform_block\type.h" />
+    <ClInclude Include="vulkan_killer\ext\inline_uniform_block\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\layer_settings\type.h" />
+    <ClInclude Include="vulkan_killer\ext\layer_settings\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\legacy_dithering\type.h" />
+    <ClInclude Include="vulkan_killer\ext\legacy_dithering\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\line_rasterization\function.h" />
+    <ClInclude Include="vulkan_killer\ext\line_rasterization\type.h" />
+    <ClInclude Include="vulkan_killer\ext\line_rasterization\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\map_memory_placed\type.h" />
+    <ClInclude Include="vulkan_killer\ext\map_memory_placed\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\memory_budget\type.h" />
+    <ClInclude Include="vulkan_killer\ext\memory_budget\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\memory_priority\type.h" />
+    <ClInclude Include="vulkan_killer\ext\memory_priority\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\mesh_shader\function.h" />
+    <ClInclude Include="vulkan_killer\ext\mesh_shader\type.h" />
+    <ClInclude Include="vulkan_killer\ext\mesh_shader\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\multisampled_render_to_single_sampled\type.h" />
+    <ClInclude Include="vulkan_killer\ext\multisampled_render_to_single_sampled\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\multi_draw\function.h" />
+    <ClInclude Include="vulkan_killer\ext\multi_draw\type.h" />
+    <ClInclude Include="vulkan_killer\ext\multi_draw\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\nested_command_buffer\type.h" />
+    <ClInclude Include="vulkan_killer\ext\nested_command_buffer\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\non_seamless_cube_map\type.h" />
+    <ClInclude Include="vulkan_killer\ext\non_seamless_cube_map\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\opacity_micromap\function.h" />
+    <ClInclude Include="vulkan_killer\ext\opacity_micromap\type.h" />
+    <ClInclude Include="vulkan_killer\ext\opacity_micromap\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pageable_device_local_memory\function.h" />
+    <ClInclude Include="vulkan_killer\ext\pageable_device_local_memory\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pageable_device_local_memory\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pci_bus_info\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pci_bus_info\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\physical_device_drm\type.h" />
+    <ClInclude Include="vulkan_killer\ext\physical_device_drm\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_creation_cache_control\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_creation_cache_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_creation_feedback\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_creation_feedback\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_library_group_handles\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_library_group_handles\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_properties\function.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_properties\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_properties\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_protected_access\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_protected_access\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_robustness\type.h" />
+    <ClInclude Include="vulkan_killer\ext\pipeline_robustness\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\primitives_generated_query\type.h" />
+    <ClInclude Include="vulkan_killer\ext\primitives_generated_query\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\primitive_topology_list_restart\type.h" />
+    <ClInclude Include="vulkan_killer\ext\primitive_topology_list_restart\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\private_data\function.h" />
+    <ClInclude Include="vulkan_killer\ext\private_data\type.h" />
+    <ClInclude Include="vulkan_killer\ext\private_data\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\provoking_vertex\type.h" />
+    <ClInclude Include="vulkan_killer\ext\provoking_vertex\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\queue_family_foreign\type.h" />
+    <ClInclude Include="vulkan_killer\ext\rasterization_order_attachment_access\type.h" />
+    <ClInclude Include="vulkan_killer\ext\rgba10x6_formats\type.h" />
+    <ClInclude Include="vulkan_killer\ext\rgba10x6_formats\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\robustness_2\type.h" />
+    <ClInclude Include="vulkan_killer\ext\robustness_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\sampler_filter_minmax\type.h" />
+    <ClInclude Include="vulkan_killer\ext\sampler_filter_minmax\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\sample_locations\function.h" />
+    <ClInclude Include="vulkan_killer\ext\sample_locations\type.h" />
+    <ClInclude Include="vulkan_killer\ext\sample_locations\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\scalar_block_layout\type.h" />
+    <ClInclude Include="vulkan_killer\ext\scalar_block_layout\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\separate_stencil_usage\type.h" />
+    <ClInclude Include="vulkan_killer\ext\separate_stencil_usage\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_atomic_float\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_atomic_float\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_atomic_float_2\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_atomic_float_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_demote_to_helper_invocation\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_demote_to_helper_invocation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_image_atomic_int64\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_image_atomic_int64\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_module_identifier\function.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_module_identifier\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_module_identifier\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_object\function.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_object\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_object\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_tile_image\type.h" />
+    <ClInclude Include="vulkan_killer\ext\shader_tile_image\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\subgroup_size_control\type.h" />
+    <ClInclude Include="vulkan_killer\ext\subgroup_size_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\subpass_merge_feedback\type.h" />
+    <ClInclude Include="vulkan_killer\ext\subpass_merge_feedback\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\surface_maintenance_1\type.h" />
+    <ClInclude Include="vulkan_killer\ext\surface_maintenance_1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\swapchain_maintenance_1\function.h" />
+    <ClInclude Include="vulkan_killer\ext\swapchain_maintenance_1\type.h" />
+    <ClInclude Include="vulkan_killer\ext\swapchain_maintenance_1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\texel_buffer_alignment\type.h" />
+    <ClInclude Include="vulkan_killer\ext\texel_buffer_alignment\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\texture_compression_astc_hdr\type.h" />
+    <ClInclude Include="vulkan_killer\ext\texture_compression_astc_hdr\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\tooling_info\function.h" />
+    <ClInclude Include="vulkan_killer\ext\tooling_info\type.h" />
+    <ClInclude Include="vulkan_killer\ext\tooling_info\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\transform_feedback\function.h" />
+    <ClInclude Include="vulkan_killer\ext\transform_feedback\type.h" />
+    <ClInclude Include="vulkan_killer\ext\transform_feedback\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_cache\function.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_cache\type.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_cache\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_features\type.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_features\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_flags\type.h" />
+    <ClInclude Include="vulkan_killer\ext\validation_flags\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\vertex_attribute_divisor\type.h" />
+    <ClInclude Include="vulkan_killer\ext\vertex_attribute_divisor\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\vertex_input_dynamic_state\function.h" />
+    <ClInclude Include="vulkan_killer\ext\vertex_input_dynamic_state\type.h" />
+    <ClInclude Include="vulkan_killer\ext\vertex_input_dynamic_state\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\ycbcr_2plane_444_formats\type.h" />
+    <ClInclude Include="vulkan_killer\ext\ycbcr_2plane_444_formats\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\ext\ycbcr_image_arrays\type.h" />
+    <ClInclude Include="vulkan_killer\ext\ycbcr_image_arrays\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\huawei\cluster_culling_shader\function.h" />
+    <ClInclude Include="vulkan_killer\huawei\cluster_culling_shader\type.h" />
+    <ClInclude Include="vulkan_killer\huawei\cluster_culling_shader\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\huawei\invocation_mask\function.h" />
+    <ClInclude Include="vulkan_killer\huawei\invocation_mask\type.h" />
+    <ClInclude Include="vulkan_killer\huawei\invocation_mask\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\huawei\subpass_shading\function.h" />
+    <ClInclude Include="vulkan_killer\huawei\subpass_shading\type.h" />
+    <ClInclude Include="vulkan_killer\huawei\subpass_shading\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\img\relaxed_line_rasterization\type.h" />
+    <ClInclude Include="vulkan_killer\img\relaxed_line_rasterization\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\intel\performance_query\function.h" />
+    <ClInclude Include="vulkan_killer\intel\performance_query\type.h" />
+    <ClInclude Include="vulkan_killer\intel\performance_query\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\intel\shader_integer_functions_2\type.h" />
+    <ClInclude Include="vulkan_killer\intel\shader_integer_functions_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\16bit_storage\type.h" />
+    <ClInclude Include="vulkan_killer\khr\16bit_storage\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\8bit_storage\type.h" />
+    <ClInclude Include="vulkan_killer\khr\8bit_storage\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\acceleration_structure\function.h" />
+    <ClInclude Include="vulkan_killer\khr\acceleration_structure\type.h" />
+    <ClInclude Include="vulkan_killer\khr\acceleration_structure\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\bind_memory_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\bind_memory_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\bind_memory_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\buffer_device_address\function.h" />
+    <ClInclude Include="vulkan_killer\khr\buffer_device_address\type.h" />
+    <ClInclude Include="vulkan_killer\khr\buffer_device_address\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\calibrated_timestamps\function.h" />
+    <ClInclude Include="vulkan_killer\khr\calibrated_timestamps\type.h" />
+    <ClInclude Include="vulkan_killer\khr\calibrated_timestamps\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\cooperative_matrix\function.h" />
+    <ClInclude Include="vulkan_killer\khr\cooperative_matrix\type.h" />
+    <ClInclude Include="vulkan_killer\khr\cooperative_matrix\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\copy_commands_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\copy_commands_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\copy_commands_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\create_renderpass_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\create_renderpass_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\create_renderpass_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\dedicated_allocation\type.h" />
+    <ClInclude Include="vulkan_killer\khr\dedicated_allocation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\deferred_host_operations\function.h" />
+    <ClInclude Include="vulkan_killer\khr\deferred_host_operations\type.h" />
+    <ClInclude Include="vulkan_killer\khr\deferred_host_operations\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\depth_stencil_resolve\type.h" />
+    <ClInclude Include="vulkan_killer\khr\depth_stencil_resolve\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\descriptor_update_template\function.h" />
+    <ClInclude Include="vulkan_killer\khr\descriptor_update_template\type.h" />
+    <ClInclude Include="vulkan_killer\khr\descriptor_update_template\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\device_group\function.h" />
+    <ClInclude Include="vulkan_killer\khr\device_group\type.h" />
+    <ClInclude Include="vulkan_killer\khr\device_group\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\device_group_creation\function.h" />
+    <ClInclude Include="vulkan_killer\khr\device_group_creation\type.h" />
+    <ClInclude Include="vulkan_killer\khr\device_group_creation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\display\function.h" />
+    <ClInclude Include="vulkan_killer\khr\display\type.h" />
+    <ClInclude Include="vulkan_killer\khr\display\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\display_swapchain\function.h" />
+    <ClInclude Include="vulkan_killer\khr\display_swapchain\type.h" />
+    <ClInclude Include="vulkan_killer\khr\display_swapchain\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\draw_indirect_count\function.h" />
+    <ClInclude Include="vulkan_killer\khr\draw_indirect_count\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\driver_properties\type.h" />
+    <ClInclude Include="vulkan_killer\khr\driver_properties\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\dynamic_rendering\function.h" />
+    <ClInclude Include="vulkan_killer\khr\dynamic_rendering\type.h" />
+    <ClInclude Include="vulkan_killer\khr\dynamic_rendering\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\dynamic_rendering_local_read\function.h" />
+    <ClInclude Include="vulkan_killer\khr\dynamic_rendering_local_read\type.h" />
+    <ClInclude Include="vulkan_killer\khr\dynamic_rendering_local_read\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence_capabilities\function.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence_capabilities\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence_capabilities\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence_fd\function.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence_fd\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_fence_fd\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory_capabilities\function.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory_capabilities\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory_capabilities\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory_fd\function.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory_fd\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_memory_fd\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore_capabilities\function.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore_capabilities\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore_capabilities\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore_fd\function.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore_fd\type.h" />
+    <ClInclude Include="vulkan_killer\khr\external_semaphore_fd\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\format_feature_flags_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\format_feature_flags_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\fragment_shader_barycentric\type.h" />
+    <ClInclude Include="vulkan_killer\khr\fragment_shader_barycentric\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\fragment_shading_rate\function.h" />
+    <ClInclude Include="vulkan_killer\khr\fragment_shading_rate\type.h" />
+    <ClInclude Include="vulkan_killer\khr\fragment_shading_rate\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_display_properties_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\get_display_properties_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_display_properties_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_memory_requirements_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\get_memory_requirements_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_memory_requirements_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_physical_device_properties_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\get_physical_device_properties_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_physical_device_properties_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_surface_capabilities_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\get_surface_capabilities_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\get_surface_capabilities_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\global_priority\type.h" />
+    <ClInclude Include="vulkan_killer\khr\global_priority\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\imageless_framebuffer\type.h" />
+    <ClInclude Include="vulkan_killer\khr\imageless_framebuffer\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\image_format_list\type.h" />
+    <ClInclude Include="vulkan_killer\khr\image_format_list\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\incremental_present\type.h" />
+    <ClInclude Include="vulkan_killer\khr\incremental_present\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\index_type_uint8\type.h" />
+    <ClInclude Include="vulkan_killer\khr\index_type_uint8\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\line_rasterization\function.h" />
+    <ClInclude Include="vulkan_killer\khr\line_rasterization\type.h" />
+    <ClInclude Include="vulkan_killer\khr\line_rasterization\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance1\function.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance1\type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance3\function.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance3\type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance3\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_4\function.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_4\type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_4\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_5\function.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_5\type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_5\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_6\function.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_6\type.h" />
+    <ClInclude Include="vulkan_killer\khr\maintenance_6\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\map_memory_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\map_memory_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\map_memory_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\multiview\type.h" />
+    <ClInclude Include="vulkan_killer\khr\multiview\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\performance_query\function.h" />
+    <ClInclude Include="vulkan_killer\khr\performance_query\type.h" />
+    <ClInclude Include="vulkan_killer\khr\performance_query\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\pipeline_executable_properties\function.h" />
+    <ClInclude Include="vulkan_killer\khr\pipeline_executable_properties\type.h" />
+    <ClInclude Include="vulkan_killer\khr\pipeline_executable_properties\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\pipeline_library\type.h" />
+    <ClInclude Include="vulkan_killer\khr\pipeline_library\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\present_id\type.h" />
+    <ClInclude Include="vulkan_killer\khr\present_id\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\present_wait\function.h" />
+    <ClInclude Include="vulkan_killer\khr\present_wait\type.h" />
+    <ClInclude Include="vulkan_killer\khr\present_wait\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\push_descriptor\function.h" />
+    <ClInclude Include="vulkan_killer\khr\push_descriptor\type.h" />
+    <ClInclude Include="vulkan_killer\khr\push_descriptor\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_query\type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_query\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_maintenance_1\function.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_maintenance_1\type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_maintenance_1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_pipeline\function.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_pipeline\type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_pipeline\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_position_fetch\type.h" />
+    <ClInclude Include="vulkan_killer\khr\ray_tracing_position_fetch\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\sampler_mirror_clamp_to_edge\type.h" />
+    <ClInclude Include="vulkan_killer\khr\sampler_ycbcr_conversion\function.h" />
+    <ClInclude Include="vulkan_killer\khr\sampler_ycbcr_conversion\type.h" />
+    <ClInclude Include="vulkan_killer\khr\sampler_ycbcr_conversion\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\separate_depth_stencil_layouts\type.h" />
+    <ClInclude Include="vulkan_killer\khr\separate_depth_stencil_layouts\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_atomic_int64\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_atomic_int64\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_clock\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_clock\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_expect_assume\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_expect_assume\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_float16_int8\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_float16_int8\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_float_controls\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_float_controls\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_float_controls_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_float_controls_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_integer_dot_product\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_integer_dot_product\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_maximal_reconvergence\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_maximal_reconvergence\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_quad_control\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_quad_control\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_subgroup_extended_types\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_subgroup_extended_types\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_subgroup_rotate\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_subgroup_rotate\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_subgroup_uniform_control_flow\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_subgroup_uniform_control_flow\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_terminate_invocation\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shader_terminate_invocation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\shared_presentable_image\function.h" />
+    <ClInclude Include="vulkan_killer\khr\shared_presentable_image\type.h" />
+    <ClInclude Include="vulkan_killer\khr\shared_presentable_image\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\surface\function.h" />
+    <ClInclude Include="vulkan_killer\khr\surface\type.h" />
+    <ClInclude Include="vulkan_killer\khr\surface\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\surface_protected_capabilities\type.h" />
+    <ClInclude Include="vulkan_killer\khr\surface_protected_capabilities\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\swapchain\function.h" />
+    <ClInclude Include="vulkan_killer\khr\swapchain\type.h" />
+    <ClInclude Include="vulkan_killer\khr\swapchain\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\synchronization_2\function.h" />
+    <ClInclude Include="vulkan_killer\khr\synchronization_2\type.h" />
+    <ClInclude Include="vulkan_killer\khr\synchronization_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\timeline_semaphore\function.h" />
+    <ClInclude Include="vulkan_killer\khr\timeline_semaphore\type.h" />
+    <ClInclude Include="vulkan_killer\khr\timeline_semaphore\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\uniform_buffer_standard_layout\type.h" />
+    <ClInclude Include="vulkan_killer\khr\uniform_buffer_standard_layout\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\variable_pointers\type.h" />
+    <ClInclude Include="vulkan_killer\khr\variable_pointers\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\vertex_attribute_divisor\type.h" />
+    <ClInclude Include="vulkan_killer\khr\vertex_attribute_divisor\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_av1\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_av1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_h264\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_h264\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_h265\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_h265\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_queue\function.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_queue\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_decode_queue\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_h264\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_h264\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_h265\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_h265\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_queue\function.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_queue\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_encode_queue\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_maintenance_1\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_maintenance_1\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_queue\function.h" />
+    <ClInclude Include="vulkan_killer\khr\video_queue\type.h" />
+    <ClInclude Include="vulkan_killer\khr\video_queue\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\vulkan_memory_model\type.h" />
+    <ClInclude Include="vulkan_killer\khr\vulkan_memory_model\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\workgroup_memory_explicit_layout\type.h" />
+    <ClInclude Include="vulkan_killer\khr\workgroup_memory_explicit_layout\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\khr\zero_initialize_workgroup_memory\type.h" />
+    <ClInclude Include="vulkan_killer\khr\zero_initialize_workgroup_memory\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\lunarg\direct_driver_loading\type.h" />
+    <ClInclude Include="vulkan_killer\lunarg\direct_driver_loading\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\msft\layered_driver\type.h" />
+    <ClInclude Include="vulkan_killer\msft\layered_driver\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nvx\binary_import\function.h" />
+    <ClInclude Include="vulkan_killer\nvx\binary_import\type.h" />
+    <ClInclude Include="vulkan_killer\nvx\binary_import\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nvx\image_view_handle\function.h" />
+    <ClInclude Include="vulkan_killer\nvx\image_view_handle\type.h" />
+    <ClInclude Include="vulkan_killer\nvx\image_view_handle\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nvx\multiview_per_view_attributes\type.h" />
+    <ClInclude Include="vulkan_killer\nvx\multiview_per_view_attributes\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\clip_space_w_scaling\function.h" />
+    <ClInclude Include="vulkan_killer\nv\clip_space_w_scaling\type.h" />
+    <ClInclude Include="vulkan_killer\nv\clip_space_w_scaling\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\compute_shader_derivatives\type.h" />
+    <ClInclude Include="vulkan_killer\nv\compute_shader_derivatives\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\cooperative_matrix\function.h" />
+    <ClInclude Include="vulkan_killer\nv\cooperative_matrix\type.h" />
+    <ClInclude Include="vulkan_killer\nv\cooperative_matrix\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\copy_memory_indirect\function.h" />
+    <ClInclude Include="vulkan_killer\nv\copy_memory_indirect\type.h" />
+    <ClInclude Include="vulkan_killer\nv\copy_memory_indirect\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\corner_sampled_image\type.h" />
+    <ClInclude Include="vulkan_killer\nv\corner_sampled_image\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\coverage_reduction_mode\function.h" />
+    <ClInclude Include="vulkan_killer\nv\coverage_reduction_mode\type.h" />
+    <ClInclude Include="vulkan_killer\nv\coverage_reduction_mode\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\cuda_kernel_launch\function.h" />
+    <ClInclude Include="vulkan_killer\nv\cuda_kernel_launch\type.h" />
+    <ClInclude Include="vulkan_killer\nv\cuda_kernel_launch\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\dedicated_allocation\type.h" />
+    <ClInclude Include="vulkan_killer\nv\dedicated_allocation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\dedicated_allocation_image_aliasing\type.h" />
+    <ClInclude Include="vulkan_killer\nv\dedicated_allocation_image_aliasing\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\descriptor_pool_overallocation\type.h" />
+    <ClInclude Include="vulkan_killer\nv\descriptor_pool_overallocation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_diagnostics_config\type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_diagnostics_config\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_diagnostic_checkpoints\function.h" />
+    <ClInclude Include="vulkan_killer\nv\device_diagnostic_checkpoints\type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_diagnostic_checkpoints\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_generated_commands\function.h" />
+    <ClInclude Include="vulkan_killer\nv\device_generated_commands\type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_generated_commands\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_generated_commands_compute\function.h" />
+    <ClInclude Include="vulkan_killer\nv\device_generated_commands_compute\type.h" />
+    <ClInclude Include="vulkan_killer\nv\device_generated_commands_compute\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\extended_sparse_address_space\type.h" />
+    <ClInclude Include="vulkan_killer\nv\extended_sparse_address_space\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory\type.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory_capabilities\function.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory_capabilities\type.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory_capabilities\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory_rdma\function.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory_rdma\type.h" />
+    <ClInclude Include="vulkan_killer\nv\external_memory_rdma\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_coverage_to_color\type.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_coverage_to_color\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_shader_barycentric\type.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_shader_barycentric\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_shading_rate_enums\function.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_shading_rate_enums\type.h" />
+    <ClInclude Include="vulkan_killer\nv\fragment_shading_rate_enums\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\framebuffer_mixed_samples\type.h" />
+    <ClInclude Include="vulkan_killer\nv\framebuffer_mixed_samples\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\inherited_viewport_scissor\type.h" />
+    <ClInclude Include="vulkan_killer\nv\inherited_viewport_scissor\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\linear_color_attachment\type.h" />
+    <ClInclude Include="vulkan_killer\nv\linear_color_attachment\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\low_latency\type.h" />
+    <ClInclude Include="vulkan_killer\nv\low_latency\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\low_latency_2\function.h" />
+    <ClInclude Include="vulkan_killer\nv\low_latency_2\type.h" />
+    <ClInclude Include="vulkan_killer\nv\low_latency_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\memory_decompression\function.h" />
+    <ClInclude Include="vulkan_killer\nv\memory_decompression\type.h" />
+    <ClInclude Include="vulkan_killer\nv\memory_decompression\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\mesh_shader\function.h" />
+    <ClInclude Include="vulkan_killer\nv\mesh_shader\type.h" />
+    <ClInclude Include="vulkan_killer\nv\mesh_shader\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\optical_flow\function.h" />
+    <ClInclude Include="vulkan_killer\nv\optical_flow\type.h" />
+    <ClInclude Include="vulkan_killer\nv\optical_flow\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\per_stage_descriptor_set\type.h" />
+    <ClInclude Include="vulkan_killer\nv\per_stage_descriptor_set\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\present_barrier\type.h" />
+    <ClInclude Include="vulkan_killer\nv\present_barrier\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\raw_access_chains\type.h" />
+    <ClInclude Include="vulkan_killer\nv\raw_access_chains\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing\function.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing\type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing_invocation_reorder\type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing_invocation_reorder\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing_motion_blur\type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing_motion_blur\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing_validation\type.h" />
+    <ClInclude Include="vulkan_killer\nv\ray_tracing_validation\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\representative_fragment_test\type.h" />
+    <ClInclude Include="vulkan_killer\nv\representative_fragment_test\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\scissor_exclusive\function.h" />
+    <ClInclude Include="vulkan_killer\nv\scissor_exclusive\type.h" />
+    <ClInclude Include="vulkan_killer\nv\scissor_exclusive\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\shader_atomic_float16_vector\type.h" />
+    <ClInclude Include="vulkan_killer\nv\shader_atomic_float16_vector\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\shader_image_footprint\type.h" />
+    <ClInclude Include="vulkan_killer\nv\shader_image_footprint\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\shader_sm_builtins\type.h" />
+    <ClInclude Include="vulkan_killer\nv\shader_sm_builtins\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\shading_rate_image\function.h" />
+    <ClInclude Include="vulkan_killer\nv\shading_rate_image\type.h" />
+    <ClInclude Include="vulkan_killer\nv\shading_rate_image\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\nv\viewport_swizzle\type.h" />
+    <ClInclude Include="vulkan_killer\nv\viewport_swizzle\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\filter_cubic_clamp\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\filter_cubic_clamp\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\filter_cubic_weights\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\filter_cubic_weights\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\fragment_density_map_offset\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\fragment_density_map_offset\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\image_processing\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\image_processing\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\image_processing_2\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\image_processing_2\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\multiview_per_view_render_areas\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\multiview_per_view_render_areas\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\multiview_per_view_viewports\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\multiview_per_view_viewports\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\render_pass_store_ops\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\render_pass_transform\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\render_pass_transform\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\rotated_copy_commands\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\rotated_copy_commands\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\tile_properties\function.h" />
+    <ClInclude Include="vulkan_killer\qcom\tile_properties\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\tile_properties\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\qcom\ycbcr_degamma\type.h" />
+    <ClInclude Include="vulkan_killer\qcom\ycbcr_degamma\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\valve\descriptor_set_host_mapping\function.h" />
+    <ClInclude Include="vulkan_killer\valve\descriptor_set_host_mapping\type.h" />
+    <ClInclude Include="vulkan_killer\valve\descriptor_set_host_mapping\vulkan_c_type.h" />
+    <ClInclude Include="vulkan_killer\valve\mutable_descriptor_type\type.h" />
+    <ClInclude Include="vulkan_killer\valve\mutable_descriptor_type\vulkan_c_type.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
