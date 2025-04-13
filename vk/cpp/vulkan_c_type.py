@@ -41,6 +41,28 @@ def vulkan_c_type(api: str, program: dict[cpp.name.name, vls.plus_plus]):
             continue
         if _is_fundamental_type(symbol, get_symbol_by_mangling):
             continue
+        
+        module_key = copy.deepcopy(vs.module_key)
+        module_key.subcomponent = 'vulkan_c_type'
+        
+        # extern_c_vulkan = copy.deepcopy(mangling)
+        # extern_c_vulkan_mangling = copy.deepcopy(mangling)
+        # extern_c_vulkan_mangling.spelling += '_extern_vulkan_c'
+        # ready[extern_c_vulkan_mangling] = vls.plus_plus(
+        #     module_key=module_key,
+        #     mangling_category=category_mangling.none,
+        #     cpp_category=symbols.extern_vulkan_c,
+        #     symbol=cpp.symbol.symbol(
+        #         type_id=cpp.type.type_id(
+        #             decl_specifier_seq=[cpp.specifier.declared_type(name=extern_c_vulkan_mangling)],
+        #         ),
+        #         name=extern_c_vulkan,
+        #         mangling=extern_c_vulkan_mangling,
+        #         category=cpp.symbol.category.type,
+        #         initializer=None,
+        #     )
+        # )
+            
         new_mangling = copy.deepcopy(mangling)
         new_mangling.spelling += '_vulkan_c_type'
         new_vls_name = cpp.name.name(
@@ -48,9 +70,9 @@ def vulkan_c_type(api: str, program: dict[cpp.name.name, vls.plus_plus]):
                             spelling='vulkan_c_type',
                         )
         new_vls = vls.plus_plus(
-            module_key=copy.deepcopy(vs.module_key),
+            module_key=module_key,
             mangling_category=category_mangling.none,
-            cpp_category=symbols.vulkan_c_api,
+            cpp_category=symbols.vulkan_c_type,
             symbol=cpp.symbol.symbol(
                 type_id=cpp.type.type_id(
                     decl_specifier_seq=[cpp.class_.class_(

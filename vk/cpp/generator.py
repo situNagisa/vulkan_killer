@@ -1,3 +1,4 @@
+import copy
 import dataclasses
 import typing
 
@@ -41,6 +42,12 @@ def _create_statement_from_vs(vs: vls.plus_plus, table: cpp.symbol.symbol_table)
             )],
         )
     if category.is_type():
+        if category == symbols.extern_vulkan_c:
+            return cpp.declaration.simple(
+                attribute=[],
+                decl_specifier_seq=[cpp.specifier.storage_class.extern_c] + symbol.type_id.decl_specifier_seq,
+                init_declarator_seq=[],
+            )
         if category in [symbols.struct, symbols.enum]:
             return cpp.declaration.simple(
                 attribute=[],
@@ -117,10 +124,53 @@ namespace vulkan_killer {
 \t
 \tstatic_assert(sizeof(::std::uintptr_t) == sizeof(::std::uint64_t));
 \t
-\ttemplate<class T>
-\tstruct vulkan_c_type{ using type = T; };
+\ttemplate<class T> requires ::std::is_object_v<T>
+\tstruct vulkan_c_type;
 \ttemplate<class T> requires requires { typename vulkan_c_type<T>::type; }
 \tusing vulkan_c_type_t = typename vulkan_c_type<T>::type;
+\t
+\ttemplate<class T> requires ::std::is_function_v<T>
+\tstruct _cast_function;
+\ttemplate<class T>
+\tusing _cast_function_t = typename _cast_function<T>::type;
+\ttemplate<class Result, class... Params>
+\tstruct _cast_function<Result(Params...)>
+\t{
+\t	using type = vulkan_c_type_t<Result>(vulkan_c_type_t<Params>...);
+\t};
+\ttemplate<class Result, class... Params>
+\tstruct _cast_function<Result(Params...) noexcept>
+\t{
+\t	using type = vulkan_c_type_t<Result>(vulkan_c_type_t<Params>...) noexcept;
+\t};
+\t
+\ttemplate<class T> requires ::std::is_object_v<T>
+\tstruct vulkan_c_type
+\t{
+\t	constexpr static decltype(auto) _calculate_type() noexcept
+\t	{
+\t		if constexpr (::std::is_pointer_v<T>)
+\t		{
+\t			return ::std::type_identity<vulkan_c_type_t<T>*>{};
+\t		}
+\t		else if constexpr (::std::is_unbounded_array_v<T>)
+\t		{
+\t			return ::std::type_identity<vulkan_c_type_t<::std::remove_extent_t<T>>[]>{};
+\t		}
+\t		else if constexpr (::std::is_bounded_array_v<T>)
+\t		{
+\t			return ::std::type_identity<vulkan_c_type_t<::std::remove_extent_t<T>>[::std::extent_v<T>]>{};
+\t		}
+\t		else if constexpr (::std::is_function_v<T>)
+\t		{
+\t			return ::std::type_identity<_cast_function_t<T>>{};
+\t		}
+\t		{
+\t			return ::std::type_identity<T>{};
+\t		}
+\t	}
+\t	using type = typename decltype(_calculate_type())::type;
+\t};
 }
 
 """
@@ -249,13 +299,38 @@ def generate(api: str, vkpp_module_struct: list[vk.lang.module.key], vkpp_module
                         from .mangle import _is_int32_max, _std_int32_max
                         
                         coder.write_line(
-                            f"using underlying_type = _calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
+                            f"using underlying_type = enum _{symbol.name.namespace[-1]} : details::calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(v) else hex(v).lower()}>;")
                         continue
-                    case vlc.cpp_symbol.vulkan_c_api:
+                    case vlc.cpp_symbol.vulkan_c_type:
                         m: cpp.name.name = symbol.type_id.decl_specifier_seq[0].bases[0].class_or_computed.name
                         coder.write_line(
                             f"template<> struct vulkan_c_type<{context.relative_name(context.table(m).name)}> {{ using type = {m.qualified_name}; }};"
                         )
+                        coder.write_line(
+                            f"template<> struct killer_type<{m.qualified_name}> {{ using type = {context.relative_name(context.table(m).name)}; }};"
+                        )
+                        continue
+                    case vlc.cpp_symbol.pfn_decl:
+                        continue
+                    case vlc.cpp_symbol.function:
+                        coder.write_line("VULKAN_KILLER_FUNCTION_API(")
+                        coder.write_line(f"\t{vs.module_key.module}, {vs.module_key.component}, {symbol.mangling.spelling},")
+                        coder.write_line(f"\t{symbol.name.spelling}, {_generate_type(symbol.type_id, context)}, ")
+                        params_list: cpp.function.declarator = copy.copy(symbol.type_id.declarator)
+                        assert isinstance(params_list, cpp.function.declarator)
+                        params_list.declarator = cpp.declarator.abstract()
+                        params_list.noexcept = False
+                        c = f"\t{_generate_declarator(params_list, context)}, "
+                        p_names: list[str] = []
+                        for i, p in enumerate(params_list.parameter_list):
+                            params_list.parameter_list[i] = copy.copy(p)
+                            p = params_list.parameter_list[i]
+                            p_names.append(p.declarator.introduced_name().spelling)
+                            p.declarator = cpp.declarator.abstract()
+                        c += f"{_generate_declarator(params_list, context)}, "
+                        c += f"({', '.join(p_names)})"
+                        coder.write_line(c)
+                        coder.write_line(');')
                         continue
                 
                 coder.write_line(
@@ -366,7 +441,7 @@ def _generate_specifier(s: cpp.specifier.specifier, context: _generator_context)
                 assert isinstance(s.base, tuple)
                 from .mangle import _is_int32_max, _std_int32_max
                 max, min = int(s.base[0]), int(s.base[1])
-                result = _cat_str(result, ':', f"_calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(max) else hex(max).lower()}, {_std_int32_max() if _is_int32_max(min) else hex(min).lower()}>")
+                result = _cat_str(result, ':', f"details::calculate_enum_underlying_type_t<{_std_int32_max() if _is_int32_max(max) else hex(max).lower()}, {_std_int32_max() if _is_int32_max(min) else hex(min).lower()}>")
             if s.enumerator_list is not None:
                 result += '\n{\n' if len(s.enumerator_list) else '{'
                 for enumerator in s.enumerator_list:

@@ -75,7 +75,8 @@ def _mangle(api: str, vkpp_symbol: vls.plus_plus, table: cpp.symbol.symbol_table
         namespace.append('ext')
     
     if mc == category_mangling.function:
-        namespace.append('c')
+        namespace.append('func')
+        spelling = _to_snake(trait.id)
     elif mc == category_mangling.function_ptr_decl:
         namespace.append('c')
         spelling = _to_snake(trait.id)

@@ -287,11 +287,12 @@ class cpp_symbol(enum.Enum):
     pfn = 250
     pfn_decl = 251
     
-    vulkan_c_api = 300
+    vulkan_c_type = 300
+    extern_vulkan_c = 301
     
 
     def is_type(self) -> bool:
-        return cpp_symbol.handle.value <= self.value <= cpp_symbol.pfn_decl.value
+        return cpp_symbol.handle.value <= self.value <= cpp_symbol.extern_vulkan_c.value
                 
     
 class mangling(enum.Enum):

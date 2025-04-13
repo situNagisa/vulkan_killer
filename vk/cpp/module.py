@@ -49,6 +49,15 @@ def make_module_table(table: module_table, pps: dict[cpp.name.name, vls.plus_plu
             if mk == vpp.module_key:
                 continue
             sc.depends.add(mk)
+        if vpp.module_key.subcomponent in ['function', 'vulkan_c_type']:
+            sc.other_depends = sc.other_depends or set()
+            sc.other_depends.add('vulkan/vulkan.h')
+        if vpp.module_key.subcomponent == 'function':
+            sc.depends.add(key(
+                module=vpp.module_key.module,
+                component=vpp.module_key.component,
+                subcomponent='vulkan_c_type',
+            ))
         
         
     

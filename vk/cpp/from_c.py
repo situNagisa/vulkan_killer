@@ -66,7 +66,6 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
                 assert spe is not None
                 assert isinstance(symbol.initializer, cpp.initialization.copy)
                 new_symbol = _create_constant(spe.name, symbol.name.spelling, symbol.initializer.expression.evaluate())
-                
             stmt_list.append(vls.plus_plus(
                 module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
@@ -163,6 +162,7 @@ def parse_c_program(module_keys: dict[cpp.name.name, key], p: dict[cpp.name.name
             assert e_t.max_enum
             max_enum = _create_constant(mangling, spe.enumerator_list[-1].identifier, str(spe.evaluate(len(spe.enumerator_list) - 1)))
             max_enum.mangling = mangling
+            max_enum.category = cpp.symbol.category.type
             stmt_list.append(vls.plus_plus(
                 module_key=copy.deepcopy(module_keys[mangling]),
                 mangling_category=vlc.mangling.none,
